@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>_amoeba remote</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<script src="_amoeba.js"></script>
+		<script>
+			window.onload = function () {
+				var m = document.location.href.match(/#init=([^=]+)/);
+				if (m) {
+					var parentBase = decodeURIComponent(m[1]).replace(/#[^#]*/, "");
+					var counter = 0;
+					var timer = window.setInterval(function () {
+						var m = document.location.href.match(/#request\|(\d+)=([^=]+)/);
+						if (m) {
+							parent.location = parentBase + "#" + m[1] + "=" + "hello";
+							window.clearInterval(timer);
+							history.go(-1);
+						}
+						else {
+						} 
+					}, 200);
+				};
+		
+			};
+		</script>
+		<style type="text/css">
+			body {
+				background-color: transparent;
+			}
+		</style>
+	</head>
+	<body>
+    </body>
+</html>

@@ -1,0 +1,53 @@
+body {
+	position: relative;
+}
+#_amoeba {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 0;
+	z-index: 20000;
+	_position: absolute;
+	_top: expression(((ignoreMe=document.documentElement.scrollTop)+28) + "px");
+}
+#_amoeba_container {
+	position: relative;
+}
+#_amoeba * {
+	padding: 0;
+	margin: 0;
+}
+#_amoeba ._amoeba {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	background-color: #FFF;
+	color: #333;
+	width: 280px;
+	padding: 10px;
+	margin-bottom: 10px;
+	/*opacity: 0.9;*/
+	_filter: alpha(opacity=90);
+}
+#_amoeba ._amoeba button.close {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	background-color: #333;
+	width: 10px;
+	height: 10px;
+	line-height: 10px;
+	text-indent: -20000px;
+	border: 0;
+}
+#_amoeba iframe {
+	border: 0; 
+}
+
