@@ -486,11 +486,9 @@
 	
 	*/
 	
-	contains = (function(){
-		return (window.Node && Node.prototype && !Node.prototype.contains) ?
+	contains = (window.Node && Node.prototype && !Node.prototype.contains) ?
 			function(parent, element){ return !!(parent.compareDocumentPosition(element) & 16); } :
- 			function(parent, element){ return parent.contains(element); };
-	})(),
+ 			function(parent, element){ return parent.contains(element); },
 	
 	attributeMatch = function (elements, attributes) {
 		var j = attributes.length,
@@ -623,21 +621,23 @@
 		return element;
 	},
 	
-	addEvent = function (element, event, func) {
-		if (element.addEventListener) {  
-			element.addEventListener(event, func, _false);   
-		} else if (element.attachEvent) {  
-			element.attachEvent('on' + event, func);  
-		}  
+	addEvent = (window.addEventListener) ? function (element, event, func) {
+		element.addEventListener(event, func, _false);   
+		return element; 
+	} : (window.attachEvent) ? function (element, event, func) {
+		element.attachEvent('on' + event, func);
+		return element; 
+	} : function (element, event, func) {
+		element['on' + event] = func;
 		return element;
 	},
 	
-	removeEvent = function (element, event, func) {
-		if (element.removeEventListener) {  
-			element.removeEventListener(event, func, _false);   
-		} else if (element.detachEvent) {  
-			element.detachEvent('on' + event, func);  
-		}  
+	removeEvent = (window.removeEventListener) ? function (element, event, func) {
+		element.removeEventListener(event, func, _false);   
+	} : (window.detachEvent) ? function (element, event, func) {
+		element.detachEvent('on' + event, func);  
+	} : function (element, event, func) {
+		element['on' + event] = _null;
 		return element;
 	},
 	
@@ -898,7 +898,7 @@
 		
 		/*
 		Function: get
-			Finds the first element that matches the provided selector. If the parent argument is supplied only elements within that element will be returned.m
+			Finds the first element that matches the provided selector. If the parent argument is supplied only elements within that element will be returned.
 		
 		Returns:
 			An element or false if no matching element is found.
