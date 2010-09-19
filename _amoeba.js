@@ -1,13 +1,10 @@
-(function(){
+!function (window, document) {
 
 	var _undefined,
 
 	_true =				true,
 	_false =			false,
 	_null =				null,
-	
-	_document =			document,
-	_body =				_document.body,
 
 	//_Boolean =			'Boolean',
 	_Number =			'Number',
@@ -38,7 +35,7 @@
 						func();
 					}
 				}
-			}) : options, _body);
+			}) : options, document.body);
 	},
 	
 	request = function (url, func, data, mode, async) {
@@ -152,9 +149,9 @@
 				return string.join('&');
 			},
 			function(subject){
-				string = string.replace(/(^.*\?)|(#.*$)/g, '');
+				subject = subject.replace(/(^.*\?)|(#.*$)/g, '');
 				var _return = {}, urlDecode = decodeURIComponent;
-				iterate(string.split('&'), function (pair) {
+				iterate(subject.split('&'), function (pair) {
 					pair = pair.split('=');
 					_return[urlDecode(pair[0])] = urlDecode(pair[1]);
 				});
@@ -169,7 +166,7 @@
 
 	// array
 	
-	getIndex = function(array, value, offset) {
+	getIndex = function (array, value, offset) {
 		var length = array.length >>> 0,
 			offset = Number(offset) || 0;
 		offset = (offset < 0) ? Math.ceil(offset) : Math.floor(offset);
@@ -211,7 +208,7 @@
 			parent = options;
 			options = _null;
 		}
-		var element = _document.createElement(tag);
+		var element = document.createElement(tag);
 		if (options) {
 			extend(element, options);
 		}
@@ -222,7 +219,7 @@
 	},
 	
 	insertSingle = function (element, parent, context) {
-		parent = parent || _body;
+		parent = parent || document.body;
 		if (context===_undefined) {
 			context = 'bottom';
 		}
@@ -280,7 +277,7 @@
 		for (i=0; i<contents.length; i++) {
 			content = contents[i];
 			insertSingle(
-				content.nodeName ? content : _document.createTextNode(content),
+				content.nodeName ? content : document.createTextNode(content),
 				parent,
 				context
 			);
@@ -292,7 +289,7 @@
 	},
 
 	getNode = function (selector, parent) {
-		parent = parent || _document;
+		parent = parent || document;
 		
 		var elements = [],
 			element,
@@ -301,7 +298,7 @@
 			i;
 			
 		if (selector[1]) {
-			element = _document.getElementById(selector[1]);
+			element = document.getElementById(selector[1]);
 			if (!element) {
 				return [];
 			}
@@ -373,10 +370,10 @@
 			parent = _null;
 		}
 		
-		parent = parent || _document;
+		parent = parent || document;
 		if (id) {
-			element = _document.getElementById(id[1]);
-			return (element && (parent===_document || contains(parent, element))) ? element : _false;
+			element = document.getElementById(id[1]);
+			return (element && (parent===document || contains(parent, element))) ? (wrapped ? amoeba(element) : element) : _false;
 		}
 		var elements = getAll(selector, parent);
 		return elements && (wrapped ? amoeba(elements[0]) : elements[0]) || _false;
@@ -400,7 +397,7 @@
 			parent = _null;
 		}
 			
-		elements = [parent || _document];
+		elements = [parent || document];
 		
 		for (i=0; i<length; i++) {
 			nodeSelector = nodeSelectors[i];
@@ -419,11 +416,11 @@
 							related = getChildren(element, nodeSelector, first);
 							break;
 						
-						// parent
+						// parent. non-standard
 						case '<':
 							first = _true;
 							
-						// ancestors
+						// ancestors. non-standard
 						case '^':
 							related = getAncestor(element, nodeSelector, first);
 							break;
@@ -437,11 +434,11 @@
 							related = getSiblings('next', element, nodeSelector, first);
 							break;
 						
-						// immediate preceding sibling
+						// immediate preceding sibling. non-standard
 						case '-':
 							first = _true;
 						
-						// preceding siblings
+						// preceding siblings. non-standard
 						case '_':
 							related = getSiblings('previous', element, nodeSelector, first);
 							break;
@@ -613,23 +610,64 @@
 			}
 			element.className += className;
 		}
-		return element;
 	},
 	
 	removeClass = function (element, className) {
 		element.className = element.className.replace(new RegExp('(^|\\s)' + className + '(?:\\s|$)'), '$1');
-		return element;
+	},
+	
+	getValue = function (element) {
+		var value;
+		switch (element.nodeName) {
+			case "select":
+				value = element.options[element.selectedIndex].value;
+				
+			case "input":
+				switch (element.type) {
+					case "checkbox":
+					case "radio":
+						if (element.checked) {
+							value = element.value;
+						}
+				}
+			
+			default:
+				value = element.value;
+		}
+		
+		return value;
+	},
+	
+	setValue = function (element, value) {
+		switch (element.nodeName) {
+			case "select":
+				var option = get('option[value=' + value + ']', element);
+				if (option) {
+					option.selected = selected;
+				}
+				
+			case "input":
+				switch (element.type) {
+					case "checkbox":
+					case "radio":
+						if (element.value==value) {
+							element.checked = "checked";
+						}
+						return;
+				}
+			
+			default:
+				element.value = value;
+				break;
+		}
 	},
 	
 	addEvent = (window.addEventListener) ? function (element, event, func) {
-		element.addEventListener(event, func, _false);   
-		return element; 
+		element.addEventListener(event, func, _false);
 	} : (window.attachEvent) ? function (element, event, func) {
 		element.attachEvent('on' + event, func);
-		return element; 
 	} : function (element, event, func) {
 		element['on' + event] = func;
-		return element;
 	},
 	
 	removeEvent = (window.removeEventListener) ? function (element, event, func) {
@@ -638,10 +676,9 @@
 		element.detachEvent('on' + event, func);  
 	} : function (element, event, func) {
 		element['on' + event] = _null;
-		return element;
 	},
 	
-	scripts = getAll('script'),
+	scripts = getAll('head script'),
 	namespace = scripts[scripts.length-1].src.replace(/^[^?]+\??/, '') || '_amoeba';
 
 	this[namespace] = extend(amoeba, {
@@ -1027,6 +1064,36 @@
 		removeClass: removeClass,
 		
 		/*
+		Function: getValue
+			Returns true or false for whether the supplied selector matches the element. 
+		
+		Arguments:
+			elements -	(array or element) . 
+			selector -	(string) Element to append the supplied content to.
+		
+		Example:
+			(start code)
+			(end)
+		*/
+		
+		getValue: getValue,
+		
+		/*
+		Function: setValue
+			Returns true or false for whether the supplied selector matches the element. 
+		
+		Arguments:
+			elements -	(array or element) . 
+			selector -	(string) Element to append the supplied content to.
+		
+		Example:
+			(start code)
+			(end)
+		*/
+		
+		setValue: setValue,
+		
+		/*
 		Function: addEvent
 			Returns true or false for whether the supplied selector matches the element. 
 		
@@ -1061,7 +1128,8 @@
 	extend(wrapper.prototype, {
 	
 		insert: function (content, context) {
-			return insert(content, this.el, context);
+			insert(content, this.el, context);
+			return this;
 		},
 		
 		get: function (selector) {
@@ -1094,15 +1162,26 @@
 			return this;
 		},
 		
+		getValue: function () {
+			return getValue(this.el);
+		},
+		
+		setValue: function (value) {
+			setValue(this.el, value);
+			return this;
+		},
+		
 		addEvent: function (event, func) {
-			return addEvent(this.el, event, func);
+			addEvent(this.el, event, func);
+			return this;
 		},
 		
 		removeEvent: function (event, func) {
-			return removeEvent(this.el, event, func);
+			removeEvent(this.el, event, func);
+			return this;
 		}
 		
 	});
 
 
-})();
+}(this, document);
