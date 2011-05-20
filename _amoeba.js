@@ -1,55 +1,40 @@
-!function (window, document) {
+(function (global, document) {
 
-	var _undefined,
-
-	_true =				true,
-	_false =			false,
-	_null =				null,
-
-	//_Boolean =			'Boolean',
-	_Number =			'Number',
-	_String =			'String',
-	_Array =			'Array',
-	_Object =			'Object',
-	_Function =			'Function',
-	//_RegExp =			'RegExp',
-	//_Date =			'Date',
-	//_Math =			'Math',
-	//_Location =		'Location',
-	_Element =			'Element',
-	_NodeList =			'NodeList',
-	_HTMLCollection =	'HTMLCollection',
-	
-	amoeba = function (element) {
+	var amoeba = function (element) {
 		return new wrapper(element); 
 	},
 	
 	load = function (url, func) {
-		var options = {src: url};
-		return create('script',
-			(type(func)===_Function) ?
-			extend(options, {
-				onload: func,
-				onreadystatechange: function () { 
-					if (this.readyState === 'loaded') {
-						func();
-					}
-				}
-			}) : options, document.body);
+		var script = create("script", document.body);
+		if (type(func) === "function") {
+			if (script.onreadystatechange !== undefined) {
+    			script.onreadystatechange = function () { 
+    				if (this.readyState === "loaded") {
+    					func();
+    				}
+    			};
+    		}
+    		else {
+                script.onload = func;
+			}
+			
+		}
+        script.src = url;
+		return script;
 	},
 	
 	request = function (url, func, data, mode, async) {
-		var x = new XMLHttpRequest;
-		mode = mode || 'get';
-		async = (async===_undefined) ? _true : async;
-		data = serialize(data, 'query');
-		if (data && mode==='get') {
-			url += '?' + data;
-			data = _null;
+		var x = new XMLHttpRequest();
+		mode = mode || "get";
+		async = (async === undefined) ? true : async;
+		data = toQuery(data);
+		if (data && mode === "get") {
+			url += "?" + data;
+			data = null;
 		}
 		x.open(mode, url, async);
 		x.onreadystatechange = function () {
-			if (x.readyState===4) func(x);
+			if (x.readyState == 4) func(x);
 		};
 		x.send(data);
 		return x;
@@ -60,17 +45,17 @@
 		switch (subject) {
 		
 			case null:
-				type = _Object;
+				type = "object";
 				break;
 				
 			case undefined:
-				type = _undefined + "";
+				type = undefined + "";
 				break;
 				
 			default:
-				type = Object.prototype.toString.call(subject).slice(8, -1);
-				if (type.indexOf(_Element)>-1) {	
-					type = _Element;
+				type = ({}).toString.call(subject).slice(8, -1).toLowerCase();
+				if (type.indexOf("element") > -1) {	
+					type = "element";
 				}
 				break;
 				
@@ -84,22 +69,22 @@
 			
 		switch (type(subject)) {
 			
-			case _Number:
-				for (i=0; i<subject; i++) {
+			case "number":
+				for (i = 0; i < subject; i++) {
 					func.call(bind || subject, i, i);
 				}
 				break;
 			
-			case _String:
-			case _Array:
-			case _NodeList:
-			case _HTMLCollection:
-				for (i=0; i<subject.length; i++) {
+			case "string":
+			case "array":
+			case "nodelist":
+			case "htmlcollection":
+				for (i = 0; i < subject.length; i++) {
 					func.call(bind || subject, subject[i], i);
 				}
 				break;
 			
-			case _Object:
+			case "object":
 				for (key in subject) {
 					if (subject.hasOwnProperty(key)) {
 						func.call(bind || subject, subject[key], key);
@@ -111,15 +96,13 @@
 		return subject;
 	},
 
-	// object
+	// Object
 	
 	extend = function (subject, properties) {
 		iterate(properties, function (value, key) {
-			var _type = type(value);
-			if (_type===_Array || _type===_Object) {
-				if (!subject[key]) {
-					subject[key] = {};
-				}
+			var valueType = type(value);
+			if (valueType === "array" || valueType === "object") {
+				subject[key] = subject[key] || {};
 				extend(subject[key], value);
 			}
 			else {
@@ -129,84 +112,47 @@
 		return subject;
 	},
 	
-	serializers = {
-		html: [
-			function(subject){
-				return ('XMLSerializer' in window) ? (new XMLSerializer()).serializeToString(subject) : subject.outerHTML;
-			},
-			function(subject){
-				return '';
-			}
-		],
-		query: [
-			function(subject){
-				var string = [], urlEncode = encodeURIComponent;
-				iterate(subject, function (value, key) {
-					string.push(
-						urlEncode(key) + '=' + urlEncode(value)
-					);
-				});
-				return string.join('&');
-			},
-			function(subject){
-				subject = subject.replace(/(^.*\?)|(#.*$)/g, '');
-				var _return = {}, urlDecode = decodeURIComponent;
-				iterate(subject.split('&'), function (pair) {
-					pair = pair.split('=');
-					_return[urlDecode(pair[0])] = urlDecode(pair[1]);
-				});
-				return _return;
-			}
-		]
-	},
-	
-	serialize = function (subject, context) {
-		return (context in serializers) ? serializers[context][0](subject) : _false;
+	toQuery = function(subject){
+		var string = [], urlEncode = encodeURIComponent;
+		iterate(subject, function (value, key) {
+			string.push(
+				urlEncode(key) + "=" + urlEncode(value)
+			);
+		});
+		return string.join("&");
 	},
 
-	// array
+	// String
 	
-	getIndex = function (array, value, offset) {
-		var length = array.length >>> 0,
-			offset = Number(offset) || 0;
-		offset = (offset < 0) ? Math.ceil(offset) : Math.floor(offset);
-		if (offset < 0) {
-			offset += length;
-		}
-		for (; offset < length; offset++) {
-			if (offset in array && array[offset] === value) {
-				return offset;
-			}
-		}
-		return -1;
-	},
-
-	// string
-	
-	deserialize = function (subject, context) {
-		return (context in serializers) ? serializers[context][1](subject) : _false;
+	parseQuery = function(subject){
+		var object = {}, urlDecode = decodeURIComponent;
+		iterate(subject.replace(/(^[^?]*\?)|(#[^#]*$)/g, "").split("&"), function (pair) {
+			pair = pair.split("=");
+			object[urlDecode(pair[0])] = (pair[1]) ? urlDecode(pair[1]) : null;
+		});
+		return object;
 	},
 	
-	populate = function (template, object, delimiters) {
+	template = function (template, object, delimiters) {
 		var string = template;
-		delimiters = delimiters || ['{', '}'];
+		delimiters = delimiters || ["{", "}"];
 		iterate(object, function (value, key) {
 			string = string.replace(delimiters[0] + key + delimiters[1], value);
 		});
 		return string;
 	},
 
-	// dom
+	// DOM
 	
 	wrapper = function (element) {
-		this.el = element || _null;
+		this.element = element || null;
 	},
 	
-	create = function (tag, options, parent, context) {
-		if (options && options.nodeType) {
-			context = parent || _null;
+	create = function (tag, options, parent, context, wrapped) {
+		if (type(options) == "element") {
+			context = parent || null;
 			parent = options;
-			options = _null;
+			options = null;
 		}
 		var element = document.createElement(tag);
 		if (options) {
@@ -215,44 +161,44 @@
 		if (parent) {
 			insertSingle(element, parent, context);
 		}
-		return element;
+		return (wrapped) ? amoeba(element) : element;
 	},
 	
 	insertSingle = function (element, parent, context) {
 		parent = parent || document.body;
-		if (context===_undefined) {
-			context = 'bottom';
+		if (context === undefined) {
+			context = "bottom";
 		}
 		var rel,
 			children;
 			
 		switch (context) {
 				
-			case 'top':
+			case "top":
 				children = getChildren(parent);
-				rel = children && children[0] || _false;
+				rel = (children) ? children[0] : false;
 				break;
 			
-			case 'bottom':
+			case "bottom":
 				break;
 			
-			case 'before':
+			case "before":
 				rel = parent;
 				parent = parent.parentNode;
 				break;
 				
-			case 'after':
-				rel = getSiblings('next', parent, _null, _true);
+			case "after":
+				rel = getSiblings("next", parent, null, true);
 				parent = (!rel) ? parent : parent.parentNode;
 				break;
 				
 			default:
-				if (context && 'toFixed' in context) {
+				if (type(context) === "number") {
 					children = getChildren(parent);
-					if (context<0) {
+					if (context < 0) {
 						context += children.length;
 					}
-					if (children.length>context) {
+					if (children.length > context) {
 						rel = children[context+1];
 					}
 				}
@@ -268,213 +214,114 @@
 	},
 	
 	insert = function (contents, parent, context) {
-		var _type = type(contents),
+		var contentType = type(contents),
 			i,
 			content;
-		if (_type===_String || _type===_Element) { 
+		if (contentType === "string" || contentType === "element") { 
 			contents = [contents];
 		}
-		for (i=0; i<contents.length; i++) {
+		for (i = 0; i < contents.length; i++) {
 			content = contents[i];
 			insertSingle(
-				content.nodeName ? content : document.createTextNode(content),
+				(content.nodeName) ? content : document.createTextNode(content),
 				parent,
 				context
 			);
 		}
 	},
 	
-	cssSplit = function (selector) {
-		return /^([^#\.\[]+)?(?:#([^\.\[]+))?(?:\.([^#\[]+))?((?:\[[^\]]+\])+)?$/.exec(selector).slice(1);
-	},
-
-	getNode = function (selector, parent) {
-		parent = parent || document;
-		
-		var elements = [],
-			element,
-			nodes,
-			values,
-			i;
-			
-		if (selector[1]) {
-			element = document.getElementById(selector[1]);
-			if (!element) {
-				return [];
-			}
-			if (!selector[0] || selector[0]==='*' || selector[0]===element.nodeName.toLowerCase()) {
-			 	if (contains(parent, element)) {
-			 		elements.push(element);
-			 	}
-			}
-		}
-		else {
-			nodes = parent.getElementsByTagName(selector[0] || '*');
-			for (i=0; i<nodes.length; i++) {
-				elements.push(nodes[i]);
-			}
-		}
-		
-		values = match(elements, selector);
-		i = elements.length;
-			
-		while (i--) {
-			if (!values[i]) {
-				elements.splice(i, 1);
-			}
-		}
-		
-		return elements;
-	},
+	/*
 	
-	traverse = function (context, start, element, selector, first) {
-
-		var next = element[start || context],
-			elements = [],
-			index = 0;
-		
-		while (next) {
-			if (next.nodeType===1) {
-				if (!selector || (selector && match(next, selector))) {
-					elements.push(next);
-				}
-				if (first && index===0) {
-					break;
-				}
-				index++;
-			}
-			next = next[context];
-		}
-		return elements;
-	},
+ 	remove: function () {},
+ 	
+ 	erase: function () {},
 	
-	getSiblings = function (context, element, selector, first) {
-		return traverse(context + 'Sibling', '', element, selector || _null, first || _null);
-	},
-	
-	getChildren = function (element, selector, first) {
-		return traverse('nextSibling', 'firstChild', element, selector || _null, first || _null);
-	},
-	
-	getAncestor = function (element, selector, first) {
-		return traverse('parentNode', '', element, selector || _null, first || _null);
-	},
+	*/
 	
 	get = function (selector, parent, wrapped) {
-		var id = /^#([^ .]+)$/.exec(selector),
-			elements,
-			element;
-			
-		if (parent===_true) {
-			wrapped = parent;
-			parent = _null;
-		}
-		
-		parent = parent || document;
-		if (id) {
-			element = document.getElementById(id[1]);
-			return (element && (parent===document || contains(parent, element))) ? (wrapped ? amoeba(element) : element) : _false;
-		}
-		var elements = getAll(selector, parent);
-		return elements && (wrapped ? amoeba(elements[0]) : elements[0]) || _false;
+		var element = (parent || document).querySelector(selector);
+		return (element) ? ((wrapped) ? amoeba(element) : element) : false;
 	},
 	
 	getAll = function (selector, parent, wrapped) {
-		var elements,
-			nodeSelectors = selector.split(' '),
-			length = nodeSelectors.length,
-			nodeSelector,
-			i=0, j=0, l,
-			element,
-			els,
-			related,
-			prev,
-			first,
-			reg = /^[><\^\+\~\-_]$/;
-			
-		if (parent===_true) {
-			wrapped = parent;
-			parent = _null;
-		}
-			
-		elements = [parent || document];
-		
-		for (i=0; i<length; i++) {
-			nodeSelector = nodeSelectors[i];
-			if (!nodeSelector.match(reg)) {
-				els = [];
-				l = elements.length;
-				nodeSelector = cssSplit(nodeSelector);
-				for (j=0; j<l; j++) {
-					element = elements[j];
-					prev = i>0 && nodeSelectors[i-1] || _false;
-					first = _false;
-					switch (prev) {
-					
-						// children
-						case '>':
-							related = getChildren(element, nodeSelector, first);
-							break;
-						
-						// parent. non-standard
-						case '<':
-							first = _true;
-							
-						// ancestors. non-standard
-						case '^':
-							related = getAncestor(element, nodeSelector, first);
-							break;
-						
-						// immediate succeeding sibling
-						case '+':
-							first = _true;
-							
-						// succeeding siblings
-						case '~':
-							related = getSiblings('next', element, nodeSelector, first);
-							break;
-						
-						// immediate preceding sibling. non-standard
-						case '-':
-							first = _true;
-						
-						// preceding siblings. non-standard
-						case '_':
-							related = getSiblings('previous', element, nodeSelector, first);
-							break;
-						
-						// any descendants
-						default:
-							related = getNode(nodeSelector, element);
-							break;
-							
-					}
-					if (related.length) {
-						els = els.concat(related);
-					}
-				}
-				elements = els;
-				
-				if (i!==0 && !(i===1 && prev && prev.match(reg))) {
-					j = elements.length;
-					while (j--) {
-						if (getIndex(elements, elements[j])<j) {
-							elements.splice(j, 1);
-						}
-					}
-				}
-					
-			}
+		var nodelist = (parent || document).querySelectorAll(selector),
+			node, i = nodelist.length, elements = [];
+
+		while (i--) {
+			node = nodelist[i];
+			elements[i] = (wrapped) ? amoeba(node) : node;
 		}
 		
-		if (wrapped) {
-			length = elements.length;
-			for (i=0; i<length; i++) {
-				elements[i] = amoeba(elements[i]);
+		return elements;
+	},
+	
+	getChildren = function (parent, selector, wrapped) {
+		var nodelist = parent.childNodes,
+			node, i = 0, l = nodelist.length, elements = [];
+	  
+		for (; i < l, node = nodelist[i]; i++) {
+			if (node.nodeType === 1 && match(node, selector)) {
+				   elements.push(
+					   (wrapped) ? amoeba(node) : node
+				   );
 			}
 		}
 		
 		return elements;
+		
+	},
+	
+	getSiblings = function (parent, selector, wrapped) {
+		var node = parent.parentNode.firstChild,
+			elements = [];
+	  
+		while (node) {
+			if (node != parent && node.nodeType === 1 && match(node, selector)) {
+				   elements.push(
+					   (wrapped) ? amoeba(node) : node
+				   );
+			}
+			node = node.nextSibling;
+		}
+		
+		return elements;
+		
+	},
+	
+	getNext = function(parent, selector, wrapped){
+		var node = parent.nextSibling;
+	  
+		while (node) {
+			if (node.nodeType === 1) {
+				if (match(node, selector)) {
+				   return (wrapped) ? amoeba(node) : node;
+				}
+				else {
+					return false;
+				}
+			}
+			node = node.nextSibling;
+		}
+		
+		return false;
+	},
+	
+	getPrevious = function(parent, selector, wrapped){
+		var node = parent.previousSibling;
+	  
+		while (node) {
+			if (node.nodeType === 1) {
+				if (match(node, selector)) {
+				   return (wrapped) ? amoeba(node) : node;
+				}
+				else {
+					return false;
+				}
+			}
+			node = node.previousSibling;
+		}
+		
+		return false;
 	},
 	
 	/*
@@ -483,205 +330,150 @@
 	
 	*/
 	
-	contains = (window.Node && Node.prototype && !Node.prototype.contains) ?
+	contains = (global.Node && Node.prototype && Node.prototype.compareDocumentPosition) ?
 			function(parent, element){ return !!(parent.compareDocumentPosition(element) & 16); } :
  			function(parent, element){ return parent.contains(element); },
 	
-	attributeMatch = function (elements, attributes) {
+	attributeMatch = function (element, attributes) {
 		var j = attributes.length,
 			attribute,
-			matches = [],
+			matchValue,
 			m,
 			name,
-			i,
 			operator,
 			value,
 			actualValue;
 			
 		while (j--) {
-			attribute = attributes[j].match(/^([a-zA-Z0-9_-]*[^~|^$*!=])(?:([~|^$*!]?)=['"]?([^'"]*)['"]?)?$/);
+			attribute = /^([a-zA-Z0-9_-]*[^~|^$*!=])(?:([~|^$*!]?)=['"]?([^'"]*)['"]?)?$/.exec(attributes[j]);
 			attribute.shift();
 			name = attribute[0];
-			i = elements.length;
 			operator = attribute[1];
 			value = attribute[2];
-			while (i--) {
-				actualValue = elements[i].getAttribute(name);
-				m = matches[i]!==_false;
-				if (actualValue!==_null && m) {
-				 	if (value) {
-						switch (operator) {
+			actualValue = element.getAttribute(name);
+			m = (matchValue !== false);
+			if (actualValue !== null && m) {
+			 	if (value) {
+					switch (operator) {
+					
+						case "~":
+							m = (actualValue.split(" ").indexOf(value) > -1);
+							break;
+					
+						case "|":
+							m = (actualValue === value || actualValue.indexOf(value + "-") === 0);
+							break;
 						
-							case '~':
-								m = (getIndex(actualValue.split(' '), value)>-1);
-								break;
+						case "^":
+							m = (actualValue.indexOf(value) === 0);
+							break;
 						
-							case '|':
-								m = (actualValue===value || actualValue.indexOf(value + '-')===0);
-								break;
+						case "$":
+							m = (actualValue.indexOf(value) === actualValue.length - value.length);
+							break;
+						
+						case "*":
+							m = (actualValue.indexOf(value) > -1);
+							break;
+						
+						case "!":
+							m = (actualValue !== value);
+							break;
 							
-							case '^':
-								m = (actualValue.indexOf(value)===0);
-								break;
+						default:
+							m = (actualValue === value);
+							break;
 							
-							case '$':
-								m = (actualValue.indexOf(value)===actualValue.length - value.length);
-								break;
-							
-							case '*':
-								m = (actualValue.indexOf(value)>-1);
-								break;
-							
-							case '!':
-								m = (actualValue!==value);
-								break;
-								
-							default:
-								m = (actualValue===value);
-								break;
-								
-						}
 					}
 				}
-				else if (m) {
-					m = _false;
-				}
-				if (!m) {
-					matches[i] = m;
-				}
+			}
+			else if (m) {
+				m = false;
+			}
+			if (!m) {
+				matchValue = m;
 			}
 		}
 		
-		return matches;
+		return matchValue;
 	},
 	
-	match = function (elements, selector) {
-		var single = ('nodeType' in elements),
-			values = [],
-			i,
-			attributes;
+	match = function (element, selector) {
+		var tag, id, className, attributes;
 		
-		if (single) {
-			if ('nodeType' in selector) {
-				return (elements==selector);
-			}
-			elements = [elements];
+		if (type(selector) == "element") {
+			return (elements === selector);
 		}
 		
-		if ('charAt' in selector) {
-			selector = cssSplit(selector);
+		selector = /^([^#.[]+)?(?:#([^.[]+))?(?:\.([^#[]+))?((?:\[[^\]]+\])+)?$/.exec(selector);				 
+		selector = selector && selector.slice(1) || [];
+		
+		tag = selector[0];
+		
+		if (tag && (tag !== "*" && tag !== element.nodeName.toLowerCase())) {
+			return false;
+		}
+
+		id = selector[1];
+		
+		if (id && element.id != id) {
+			return false;
 		}
 		
-		attributes = selector[3] ? selector[3].slice(1, -1).split('][') : [];
+		className = selector[2];
 		
-		i = elements.length;
+		if (className && element.className.split(" ").indexOf(className) < 0) {
+			return false;
+		}
 		
-		if (selector[1]) {
-			attributes.unshift('id="' + selector[1] + '"');
-		}
-		if (selector[2]) {
-			attributes.unshift('class~="' + selector[2] + '"');
-		}
+		attributes = (selector[3]) ? selector[3].slice(1, -1).split("][") : [];
 	
 		if (attributes.length) {
-			values = attributeMatch(elements, attributes);
+			return attributeMatch(element, attributes);
 		}
-		
-		while (i--) {
-			if (values[i]!==_false && (selector[0] && (selector[0]!=='*' && selector[0]!==elements[i].nodeName.toLowerCase()))) {
-				values[i] = _false;
-			}
-			else if (values[i]===_undefined) {
-				values[i] = _true;
-			}
+		else {
+			return true;
 		}
-		
-		return (single) ? values[0] : values;
-	},
-	
-	hasClass = function (element, className) {
-		return getIndex(element.className.split(' '), className) > -1;
 	},
 	
 	addClass = function (element, className) {
-		if (!hasClass(element, className)) {
-			if (element.className.length) {
-				className = ' ' + className; 
-			}
-			element.className += className;
+		var classList = element.className.split(/\s+/),
+			index = classList.indexOf(className);
+		if (index == -1) {
+			classList.push(className);
+			element.className = classList.join(" ");
 		}
 	},
 	
 	removeClass = function (element, className) {
-		element.className = element.className.replace(new RegExp('(^|\\s)' + className + '(?:\\s|$)'), '$1');
-	},
-	
-	getValue = function (element) {
-		var value;
-		switch (element.nodeName) {
-			case "select":
-				value = element.options[element.selectedIndex].value;
-				
-			case "input":
-				switch (element.type) {
-					case "checkbox":
-					case "radio":
-						if (element.checked) {
-							value = element.value;
-						}
-				}
-			
-			default:
-				value = element.value;
-		}
-		
-		return value;
-	},
-	
-	setValue = function (element, value) {
-		switch (element.nodeName) {
-			case "select":
-				var option = get('option[value=' + value + ']', element);
-				if (option) {
-					option.selected = selected;
-				}
-				
-			case "input":
-				switch (element.type) {
-					case "checkbox":
-					case "radio":
-						if (element.value==value) {
-							element.checked = "checked";
-						}
-						return;
-				}
-			
-			default:
-				element.value = value;
-				break;
+		var classList = element.className.split(/\s+/),
+		 	index = classList.indexOf(className);
+		if (index > -1) {
+			classList.splice(index, 1);
+			element.className = classList.join(" ");
 		}
 	},
 	
-	addEvent = (window.addEventListener) ? function (element, event, func) {
-		element.addEventListener(event, func, _false);
-	} : (window.attachEvent) ? function (element, event, func) {
-		element.attachEvent('on' + event, func);
+	addEvent = (global.addEventListener) ? function (element, event, func) {
+		element.addEventListener(event, func, false);
+	} : (global.attachEvent) ? function (element, event, func) {
+		element.attachEvent("on" + event, func);
 	} : function (element, event, func) {
-		element['on' + event] = func;
+		element["on" + event] = func;
 	},
 	
-	removeEvent = (window.removeEventListener) ? function (element, event, func) {
-		element.removeEventListener(event, func, _false);   
-	} : (window.detachEvent) ? function (element, event, func) {
-		element.detachEvent('on' + event, func);  
+	removeEvent = (global.removeEventListener) ? function (element, event, func) {
+		element.removeEventListener(event, func, false);	 
+	} : (global.detachEvent) ? function (element, event, func) {
+		element.detachEvent("on" + event, func);	
 	} : function (element, event, func) {
-		element['on' + event] = _null;
+		element["on" + event] = null;
 	},
 	
-	scripts = getAll('head script'),
-	namespace = scripts[scripts.length-1].src.replace(/^[^?]+\??/, '') || '_amoeba';
+	scripts = getAll("head script"),
+	namespace = scripts[scripts.length-1].src.replace(/^[^?]+\??/, "") || "_amoeba";
 
-	this[namespace] = extend(amoeba, {
+	global[namespace] = extend(amoeba, {
 		
 		/*
 		Function: load
@@ -697,8 +489,8 @@
 		Example:
 			(start code)
 			
-			_amoeba.load('http://amoeba-js.net/js', function(){
-				alert('script loaded');
+			_amoeba.load("http://amoeba-js.net/js", function(){
+				alert("script loaded");
 			});
 			
 			(end)
@@ -712,12 +504,13 @@
 			
 		Arguments:
 			url -	(string) The url of the script to be loaded.
-			func -	(function) A function that is called when the script has loaded.
+			func -	(function) A function that is called with the XMLHttpRequest object as an argument when the script has loaded.
 			data -	(object) Optional. An object containing the key-value pairs sent with the request.
 			mode -	(string) Optional. The mode of the request; "get" or "post". Default is "get".
 			async -	(boolean) Optional. A boolean to set asynchronous mode on or off. Default is true.
 		
 		Returns:
+			An XMLHttpRequest object.
 			
 			
 		Example:
@@ -735,7 +528,7 @@
 			subject -	(mixed) The variable whose type is to be identified.
 		
 		Returns:
-			A string: "Boolean", "Number", "String", "Array", "Object", "Function", "RegExp", "Date", "Math", "Location", "Element", "NodeList" or "HTMLCollection".
+			A string: "boolean", "number", "string", "array", "object", "function", "regexp", "date", "math", "location", "element", "nodelist", "htmlcollection" or "undefined".
 			
 		Example:
 			(start code)
@@ -743,7 +536,7 @@
 			
 			var myType = _amoeba.type(myVariable);
 			
-			//myType = "Array"
+			//myType = "array"
 			(end)
 		
 		Credits:
@@ -810,7 +603,7 @@
 		
 		/*
 		
-		Function: serialize
+		Function: toQuery
 			Returns a serialized string built from the supplied object.
 		
 		Arguments:
@@ -823,28 +616,27 @@
 				recipient: "world"
 			};
 			
-			var myQueryString = _amoeba.serialize(myObject, 'query');
+			var myQueryString = _amoeba.serialize(myObject, "query");
 			
 			// myQueryString = "message=hello&recipient=world";
 			(end)
 		*/
 	
-		serialize: serialize, 
+		toQuery: toQuery, 
 		
 		/*
-		Function: deserialize
+		Function: parseQuery
 			Returns an object containing the querystring data contained in the supplied serialized string.
 		
 		Arguments:
 			string -		(string) The serialized string to be transformed.
-			context -		(string) The serialized string to be transformed.
 		
 		Example:
 			(start code)
 			// document.location.href = 
-			// 'http://www.mydomain.com/index.php?message=hello&recipient=world';
+			// "http://www.mydomain.com/index.php?message=hello&recipient=world";
 			
-			var myObject = _amoeba.deserialize(document.location.href, 'query');
+			var myObject = _amoeba.deserialize(document.location.href, "query");
 			
 			//myObject = {
 			//	message: "hello",
@@ -853,11 +645,11 @@
 			(end)
 		*/
 		
-		deserialize: deserialize,
+		parseQuery: parseQuery,
 	
 		/*
-		Function: populate
-			Returns a template string populated with the data of the supplied object.
+		Function: template
+			Returns a template string populatedd with the data of the supplied object.
 		
 		Arguments:
 			template -		(string) A string with tokens.
@@ -873,13 +665,13 @@
 				recipient: "world"
 			};
 			
-			var myMessage = _amoeba.populate(myTemplate, myObject);
+			var myMessage = _amoeba.template(myTemplate, myObject);
 			
 			// myMessage = "hello, world!";
 			(end)
 		*/
 	
-		populate: populate,
+		template: template,
 		
 		/*
 		Function: create
@@ -946,13 +738,13 @@
 		
 		Example:
 			(start code)
-			var body = _amoeba.get('body');
+			var body = _amoeba.get("body");
 			
-			var firstChild = _amoeba.get('> *');
+			var firstChild = _amoeba.get("> *");
 			
-			var firstUserList = _amoeba.get('body ul.users');
+			var firstUserList = _amoeba.get("body ul.users");
 			
-			var checkedRadio = _amoeba.get('input[name="optIn"][type="radio"][checked]');
+			var checkedRadio = _amoeba.get("input[name="optIn"][type="radio"][checked]");
 			(end)
 		*/
 		
@@ -989,6 +781,66 @@
 		getAll: getAll,
 		
 		/*
+		Function: getChildren
+			Returns true or false for whether the supplied selector matches the element. 
+		
+		Arguments:
+			elements -	(array or element) . 
+			selector -	(string) Element to append the supplied content to.
+		
+		Example:
+			(start code)
+			(end)
+		*/
+		
+		getChildren: getChildren,
+		
+		/*
+		Function: getSiblings
+			Returns true or false for whether the supplied selector matches the element. 
+		
+		Arguments:
+			elements -	(array or element) . 
+			selector -	(string) Element to append the supplied content to.
+		
+		Example:
+			(start code)
+			(end)
+		*/
+		
+		getSiblings: getSiblings,
+		
+		/*
+		Function: getNext
+			Returns true or false for whether the supplied selector matches the element. 
+		
+		Arguments:
+			elements -	(array or element) . 
+			selector -	(string) Element to append the supplied content to.
+		
+		Example:
+			(start code)
+			(end)
+		*/
+		
+		getNext: getNext,
+		
+		/*
+		Function: getPrevious
+			Returns true or false for whether the supplied selector matches the element. 
+		
+		Arguments:
+			elements -	(array or element) . 
+			selector -	(string) Element to append the supplied content to.
+		
+		Example:
+			(start code)
+			(end)
+		*/
+		
+		getPrevious: getPrevious,
+		
+		/*
 		Function: contains
 			Returns true or false for whether the supplied selector matches the element. 
 		
@@ -1019,21 +871,6 @@
 		match: match,
 		
 		/*
-		Function: hasClass
-			Returns true or false for whether the supplied selector matches the element. 
-		
-		Arguments:
-			elements -	(array or element) . 
-			selector -	(string) Element to append the supplied content to.
-		
-		Example:
-			(start code)
-			(end)
-		*/
-		
-		hasClass: hasClass,
-		
-		/*
 		Function: addClass
 			Returns true or false for whether the supplied selector matches the element. 
 		
@@ -1062,37 +899,7 @@
 		*/
 		
 		removeClass: removeClass,
-		
-		/*
-		Function: getValue
-			Returns true or false for whether the supplied selector matches the element. 
-		
-		Arguments:
-			elements -	(array or element) . 
-			selector -	(string) Element to append the supplied content to.
-		
-		Example:
-			(start code)
-			(end)
-		*/
-		
-		getValue: getValue,
-		
-		/*
-		Function: setValue
-			Returns true or false for whether the supplied selector matches the element. 
-		
-		Arguments:
-			elements -	(array or element) . 
-			selector -	(string) Element to append the supplied content to.
-		
-		Example:
-			(start code)
-			(end)
-		*/
-		
-		setValue: setValue,
-		
+				
 		/*
 		Function: addEvent
 			Returns true or false for whether the supplied selector matches the element. 
@@ -1125,63 +932,66 @@
 		
 	});
 	
-	extend(wrapper.prototype, {
+	wrapper.prototype = {
 	
 		insert: function (content, context) {
-			insert(content, this.el, context);
+			insert(content, this.element, context);
 			return this;
 		},
 		
 		get: function (selector) {
-			return get(selector, this.el);
+			return get(selector, this.element);
 		},
 		
 		getAll: function (selector) {
-			return getAll(selector, this.el);
+			return getAll(selector, this.element);
+		},
+		
+		getChildren: function (selector) {
+			return getChildren(this.element, selector, true);
+		},
+		
+		getSiblings: function (selector) {
+			return getSiblings(this.element, selector, true);
+		},
+		
+		getNext: function (selector) {
+			return getNext(this.element, selector, true);
+		},
+		
+		getPrevious: function (selector) {
+			return getPrevious(this.element, selector, true);
 		},
 		
 		contains: function (element) {
-			return contains(this.el, element);
+			return contains(this.element, element);
 		},
 		
 		match: function (selector) {
-			return match(this.el, selector);
-		},
-	
-		hasClass: function (className) {
-			return hasClass(this.el, className);
+			return match(this.element, selector);
 		},
 		
 		addClass: function (className) {
-			addClass(this.el, className);
+			addClass(this.element, className);
 			return this;
 		},
 		
 		removeClass: function (className) {
-			removeClass(this.el, className);
-			return this;
-		},
-		
-		getValue: function () {
-			return getValue(this.el);
-		},
-		
-		setValue: function (value) {
-			setValue(this.el, value);
+			removeClass(this.element, className);
 			return this;
 		},
 		
 		addEvent: function (event, func) {
-			addEvent(this.el, event, func);
+			addEvent(this.element, event, func);
 			return this;
 		},
 		
 		removeEvent: function (event, func) {
-			removeEvent(this.el, event, func);
+			removeEvent(this.element, event, func);
 			return this;
 		}
 		
-	});
+	};
 
 
-}(this, document);
+}(this, document));
