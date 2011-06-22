@@ -1,6 +1,4 @@
-(function(scripts, document, index, load, head){
-	
-	head = document.getElementsByTagName("head")[0];
+(function(scripts, document, index, load){
 	
 	index = scripts.length;
 		
@@ -18,7 +16,7 @@
 				script.onload = load;
 			}
 			script.src = scripts[--index];
-			head.appendChild(script);
+			document.body.appendChild(script);
 		}
 	};
 		

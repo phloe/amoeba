@@ -1,25 +1,25 @@
 (function (global, document) {
 
 	var amoeba = function (element) {
-		return new wrapper(element); 
+		return new wrapper(element);
 	},
 	
 	load = function (url, func) {
 		var script = create("script", document.body);
 		if (type(func) === "function") {
 			if (script.onreadystatechange !== undefined) {
-    			script.onreadystatechange = function () { 
-    				if (this.readyState === "loaded") {
-    					func();
-    				}
-    			};
-    		}
-    		else {
-                script.onload = func;
+				script.onreadystatechange = function () {
+					if (this.readyState === "loaded") {
+						func();
+					}
+				};
+			}
+			else {
+				script.onload = func;
 			}
 			
 		}
-        script.src = url;
+		script.src = url;
 		return script;
 	},
 	
@@ -66,7 +66,7 @@
 	iterate = function (subject, func, bind) {
 		var key,
 			i;
-			
+		
 		switch (type(subject)) {
 			
 			case "number":
@@ -121,7 +121,7 @@
 		});
 		return string.join("&");
 	},
-
+	
 	// String
 	
 	parseQuery = function(subject){
@@ -141,7 +141,7 @@
 		});
 		return string;
 	},
-
+	
 	// DOM
 	
 	wrapper = function (element) {
@@ -171,9 +171,9 @@
 		}
 		var rel,
 			children;
-			
+		
 		switch (context) {
-				
+			
 			case "top":
 				children = getChildren(parent);
 				rel = (children) ? children[0] : false;
@@ -232,21 +232,29 @@
 	
 	/*
 	
- 	remove: function () {},
- 	
- 	erase: function () {},
+	remove: function () {},
+	
+	erase: function () {},
 	
 	*/
 	
 	get = function (selector, parent, wrapped) {
+		if (typeof parent == "boolean") {
+			wrapped = parent;
+			parent = null;
+		}
 		var element = (parent || document).querySelector(selector);
 		return (element) ? ((wrapped) ? amoeba(element) : element) : false;
 	},
 	
 	getAll = function (selector, parent, wrapped) {
+		if (typeof parent == "boolean") {
+			wrapped = parent;
+			parent = null;
+		}
 		var nodelist = (parent || document).querySelectorAll(selector),
 			node, i = nodelist.length, elements = [];
-
+		
 		while (i--) {
 			node = nodelist[i];
 			elements[i] = (wrapped) ? amoeba(node) : node;
@@ -255,15 +263,15 @@
 		return elements;
 	},
 	
-	getChildren = function (parent, selector, wrapped) {
-		var nodelist = parent.childNodes,
+	getChildren = function (element, selector, wrapped) {
+		var nodelist = element.childNodes,
 			node, i = 0, l = nodelist.length, elements = [];
 	  
 		for (; i < l, node = nodelist[i]; i++) {
 			if (node.nodeType === 1 && match(node, selector)) {
-				   elements.push(
-					   (wrapped) ? amoeba(node) : node
-				   );
+				elements.push(
+					(wrapped) ? amoeba(node) : node
+				);
 			}
 		}
 		
@@ -271,15 +279,15 @@
 		
 	},
 	
-	getSiblings = function (parent, selector, wrapped) {
-		var node = parent.parentNode.firstChild,
+	getSiblings = function (element, selector, wrapped) {
+		var node = element.parentNode.firstChild,
 			elements = [];
-	  
+		
 		while (node) {
 			if (node != parent && node.nodeType === 1 && match(node, selector)) {
-				   elements.push(
-					   (wrapped) ? amoeba(node) : node
-				   );
+				elements.push(
+					(wrapped) ? amoeba(node) : node
+				);
 			}
 			node = node.nextSibling;
 		}
@@ -288,9 +296,9 @@
 		
 	},
 	
-	getNext = function(parent, selector, wrapped){
-		var node = parent.nextSibling;
-	  
+	getNext = function(element, selector, wrapped){
+		var node = element.nextSibling;
+		
 		while (node) {
 			if (node.nodeType === 1) {
 				if (match(node, selector)) {
@@ -306,9 +314,9 @@
 		return false;
 	},
 	
-	getPrevious = function(parent, selector, wrapped){
-		var node = parent.previousSibling;
-	  
+	getPrevious = function(element, selector, wrapped){
+		var node = element.previousSibling;
+		
 		while (node) {
 			if (node.nodeType === 1) {
 				if (match(node, selector)) {
@@ -331,8 +339,8 @@
 	*/
 	
 	contains = (global.Node && Node.prototype && Node.prototype.compareDocumentPosition) ?
-			function(parent, element){ return !!(parent.compareDocumentPosition(element) & 16); } :
- 			function(parent, element){ return parent.contains(element); },
+			function(element, child){ return !!(element.compareDocumentPosition(child) & 16); } :
+ 			function(element, child){ return element.contains(child); },
 	
 	attributeMatch = function (element, attributes) {
 		var j = attributes.length,
@@ -353,13 +361,13 @@
 			actualValue = element.getAttribute(name);
 			m = (matchValue !== false);
 			if (actualValue !== null && m) {
-			 	if (value) {
+				if (value) {
 					switch (operator) {
-					
+						
 						case "~":
 							m = (actualValue.split(" ").indexOf(value) > -1);
 							break;
-					
+						
 						case "|":
 							m = (actualValue === value || actualValue.indexOf(value + "-") === 0);
 							break;
@@ -379,11 +387,11 @@
 						case "!":
 							m = (actualValue !== value);
 							break;
-							
+						
 						default:
 							m = (actualValue === value);
 							break;
-							
+						
 					}
 				}
 			}
@@ -413,7 +421,7 @@
 		if (tag && (tag !== "*" && tag !== element.nodeName.toLowerCase())) {
 			return false;
 		}
-
+		
 		id = selector[1];
 		
 		if (id && element.id != id) {
@@ -447,7 +455,7 @@
 	
 	removeClass = function (element, className) {
 		var classList = element.className.split(/\s+/),
-		 	index = classList.indexOf(className);
+			index = classList.indexOf(className);
 		if (index > -1) {
 			classList.splice(index, 1);
 			element.className = classList.join(" ");
@@ -470,9 +478,9 @@
 		element["on" + event] = null;
 	},
 	
-	scripts = getAll("head script"),
+	scripts = getAll("script", document.body),
 	namespace = scripts[scripts.length-1].src.replace(/^[^?]+\??/, "") || "_amoeba";
-
+	
 	global[namespace] = extend(amoeba, {
 		
 		/*
@@ -543,7 +551,7 @@
 			Kangax
 		
 		*/
-	
+		
 		type: type,
 		
 		/*
@@ -572,7 +580,7 @@
 		*/
 		
 		iterate: iterate,
-	
+		
 		
 		/*
 		Function: extend
@@ -598,7 +606,7 @@
 			(end)
 		
 		*/
-	
+		
 		extend: extend,
 		
 		/*
@@ -621,7 +629,7 @@
 			// myQueryString = "message=hello&recipient=world";
 			(end)
 		*/
-	
+		
 		toQuery: toQuery, 
 		
 		/*
@@ -646,7 +654,7 @@
 		*/
 		
 		parseQuery: parseQuery,
-	
+		
 		/*
 		Function: template
 			Returns a template string populatedd with the data of the supplied object.
@@ -670,7 +678,7 @@
 			// myMessage = "hello, world!";
 			(end)
 		*/
-	
+		
 		template: template,
 		
 		/*
@@ -706,7 +714,7 @@
 			//	myElement = <button style="background-color: red; border-color: green; color: green;" onclick="alert(\"hello, world!\");">click</button>
 			(end)
 		*/
-
+		
 		create:	create,
 		
 		/*
@@ -933,7 +941,7 @@
 	});
 	
 	wrapper.prototype = {
-	
+		
 		insert: function (content, context) {
 			insert(content, this.element, context);
 			return this;
@@ -992,6 +1000,6 @@
 		}
 		
 	};
-
-
+	
+	
 }(this, document));
