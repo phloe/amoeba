@@ -14,8 +14,8 @@ It's used in the bookmarklet builder on <a href="http://amoeba-js.net/">amoeba-j
 
 ## Usage
 
-The API is exposed as a variable in global scope (window); by default as "_amoeba" - but you can set it to whatever namespace you want.
+The API is exposed as a variable in global scope (window); by default as `_amoeba` - but you can set it to whatever namespace you want.
 
-If you wanted to use it as "foobar" all you need to do is add "?name=foobar" to the end of the source:
+If you wanted to use it as `foobar` all you need to do is add `?name=foobar` to the end of the source:
 
     <script src="http://amoeba-js.net/js/?name=foobar"></script>
