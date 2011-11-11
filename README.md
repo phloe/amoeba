@@ -1,13 +1,13 @@
-Amoeba (alpha)
-=============
+Amoeba <sub>(alpha)</sub>
+=========================
 
 Micro API designed for use in bootstrap bookmarklets.
 
 Amoeba was made from the following assumptions:
 
-* Smaller size is more important than features.
+1. Smaller size is more important than features.
 
-* Bookmarklets are primarily used by intermediate to advanced users, ie. modern browsers only needs to be supported.
+2. Bookmarklets are primarily used by intermediate to advanced users, ie. modern browsers only needs to be supported.
 
 It currently weighs in at just above 2Kb minified and gzipped.
 
