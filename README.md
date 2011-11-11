@@ -21,6 +21,6 @@ If you wanted to use it as `foobar` all you need to do is add `?name=foobar` to 
     <script src="http://amoeba-js.net/js/?name=foobar"></script>
 
 
-
+<hr/>
 
 <super>*</super> API is subject to change drasticly and documentation is rather spotty :D
