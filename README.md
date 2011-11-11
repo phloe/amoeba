@@ -1,4 +1,4 @@
-# Amoeba <sub>(alpha)</sub>
+# Amoeba <sub>(alpha)</sub><super>*</super>
 
 Micro API designed for use in bootstrap bookmarklets.
 
@@ -10,7 +10,7 @@ Amoeba was made from the following assumptions:
 
 It currently weighs in at just above 2Kb minified and gzipped.
 
-It's used in the bookmarklet builder on <a href="http://amoeba-js.net/">amoeba-js.net</a>.
+It's used in the bookmarklet builder on [amoeba-js.net](http://amoeba-js.net/).
 
 ## Usage
 
@@ -19,3 +19,8 @@ The API is exposed as a variable in global scope (window); by default as `_amoeb
 If you wanted to use it as `foobar` all you need to do is add `?name=foobar` to the end of the source:
 
     <script src="http://amoeba-js.net/js/?name=foobar"></script>
+
+
+
+
+<super>*</super> API is subject to change drasticly and documentation is rather spotty :D
