@@ -1,5 +1,4 @@
-Amoeba <sub>(alpha)</sub>
-=========================
+# Amoeba <sub>(alpha)</sub>
 
 Micro API designed for use in bootstrap bookmarklets.
 
@@ -13,8 +12,7 @@ It currently weighs in at just above 2Kb minified and gzipped.
 
 It's used in the bookmarklet builder on <a href="http://amoeba-js.net/">amoeba-js.net</a>.
 
-Usage
------
+## Usage
 
 The API is exposed as a variable in global scope (window); by default as "_amoeba" - but you can set it to whatever namespace you want.
 
