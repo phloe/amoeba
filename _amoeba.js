@@ -489,9 +489,9 @@
 		element["on" + event] = null;
 	},
 
-	body = document.body,
+	body = document.body, script = get("script[href*=?name]"),
 
-	namespace = get("script").src.replace(/^[^?]+\??/, "") || "_amoeba";
+	namespace = script && script.src.replace(/^[^?]+\?name=/, "") || "_amoeba";
 
 	global[namespace] = extend(amoeba, {
 
