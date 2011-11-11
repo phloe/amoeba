@@ -1,5 +1,7 @@
-(function(source, document, script){
-	script = document.createElement("script");
+(function(source, document, tag, firstScript){
+    tag = "script";
+	firstScript = document.getElementsByTagName(tag)[0];
+	script = document.createElement(tag);
 	script.src = source;
-	document.body.appendChild(script);
-}("{arguments}", document));
+	firstScript.parentNode.insertBefore(script, firstScript);
+})("{arguments}", document);

@@ -1,25 +1,30 @@
-(function(scripts, document, index, load){
-	
+(function(scripts, document, index, tag, firstScript, load){
+
+	tag = "script";
+
 	index = scripts.length;
-		
+
+	firstScript = document.getElementsByTagName(tag)[0];
+
 	load = function (script) {
 		if (index) {
-			script = document.createElement("script");
-			if (script.onreadystatechange!==undefined) {
-				script.onreadystatechange = function () { 
+			script = document.createElement(tag);
+			if (script.onreadystatechange !== undefined) {
+				script.onreadystatechange = function () {
 					if (script.readyState == "loaded") {
 						load();
 					}
-				}
+				};
 			}
 			else {
 				script.onload = load;
 			}
 			script.src = scripts[--index];
-			document.body.appendChild(script);
+			firstScript.parentNode.insertBefore(script, firstScript);
+			firstScript = script;
 		}
 	};
-		
+
 	load();
 
 })(["{arguments}"], document);
