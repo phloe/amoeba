@@ -1,4 +1,4 @@
-(function(scripts, document, index, tag, firstScript, load){
+(function(scripts, document, index, tag, firstScript, load, state){
 
 	tag = "script";
 
@@ -9,8 +9,9 @@
 	load = function (script) {
 		if (index) {
 			script = document.createElement(tag);
-			if (script.onreadystatechange !== undefined) {
-				script.onreadystatechange = function () {
+            state = script.onreadystatechange;
+			if (state !== undefined) {
+				state = function () {
 					if (script.readyState == "loaded") {
 						load();
 					}
