@@ -491,7 +491,7 @@
 		element["on" + event] = null;
 	},
 
-	body = document.body, script = get("script[href*=?name]"),
+	body = document.body, script = get("script[href*='?name=']"),
 
 	namespace = script && script.src.replace(/^[^?]+\?name=/, "") || "_amoeba";
 
