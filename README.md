@@ -6,7 +6,7 @@ Amoeba was made from the following assumptions:
 
 1. Smaller size is more important than features; existing libraries are too big and may also collide with other scripts.
 
-2. Only modern browsers needs to be supported; users are expected to be intermediate to advanced users.
+2. Only modern browsers need to be supported; users are expected to be intermediate to advanced users.
 
 It currently weighs in at just above 2Kb minified and gzipped.
 
@@ -18,7 +18,7 @@ The API is exposed as a variable in global scope (window); by default as `_amoeb
 
 If you wanted to use it as `foobar` all you need to do is add `?name=foobar` to the end of the source:
 
-    <script src="http://amoeba-js.net/js/?name=foobar"></script>
+	<script src="http://amoeba-js.net/js/?name=foobar"></script>
 
 
 <hr/>
