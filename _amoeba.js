@@ -1,7 +1,5 @@
 (function (global, document) {
 
-    // hello
-
     var amoeba = function (element) {
 		return new wrapper(element);
 	},
