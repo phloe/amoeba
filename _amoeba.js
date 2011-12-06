@@ -78,10 +78,11 @@
 				break;
 
 			case "string":
+				subject = subject.split("");
 			case "array":
 			case "nodelist":
 			case "htmlcollection":
-				for (i = 0; i < subject.length; i++) {
+				for (i = 0, l = subject.length; i < l; i++) {
 					func.call(bind || subject, subject[i], i);
 				}
 				break;
@@ -313,7 +314,7 @@
 		while (node) {
 			if (node.nodeType === 1) {
 				if (match(node, selector)) {
-				   return (wrapped) ? amoeba(node) : node;
+					return (wrapped) ? amoeba(node) : node;
 				}
 				else {
 					return false;
@@ -331,7 +332,7 @@
 		while (node) {
 			if (node.nodeType === 1) {
 				if (match(node, selector)) {
-				   return (wrapped) ? amoeba(node) : node;
+					return (wrapped) ? amoeba(node) : node;
 				}
 				else {
 					return false;
