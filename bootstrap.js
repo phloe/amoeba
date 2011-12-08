@@ -2,6 +2,6 @@
     tag = "script";
 	firstScript = document.getElementsByTagName(tag)[0];
 	script = document.createElement(tag);
-	script.src = source;
 	firstScript.parentNode.insertBefore(script, firstScript);
+	script.src = source;
 })("{arguments}", document);
