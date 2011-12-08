@@ -21,8 +21,8 @@
 				else {
 					script.onload = load;
 				}
-				script.src = scripts[--index];
 				firstScript.parentNode.insertBefore(script, firstScript);
+				script.src = scripts[--index];
 				firstScript = script;
 			}
 		};
