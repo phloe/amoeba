@@ -1,32 +1,30 @@
-(function(scripts, document){
+(function(scripts, doc){
 
 	var state, 
 		tag = "script",
 	
 		index = scripts.length,
 	
-		firstScript = document.getElementsByTagName(tag)[0],
+		firstScript = doc.getElementsByTagName(tag)[0];
 	
-		load = function (script) {
-			if (index) {
-				script = document.createElement(tag);
-	            state = script.onreadystatechange;
-				if (state !== undefined) {
-					state = function () {
-						if (script.readyState == "loaded") {
-							load();
-						}
-					};
-				}
-				else {
-					script.onload = load;
-				}
-				firstScript.parentNode.insertBefore(script, firstScript);
-				script.src = scripts[--index];
-				firstScript = script;
+	function load (script) {
+		if (index) {
+			script = doc.createElement(tag);
+            state = script.onreadystatechange;
+			if (state !== undefined) {
+				state = function () {
+					if (script.readyState == "loaded") {
+						load();
+					}
+				};
 			}
-		};
-
-	load();
+			else {
+				script.onload = load;
+			}
+			firstScript.parentNode.insertBefore(script, firstScript);
+			script.src = scripts[--index];
+			firstScript = script;
+		}
+	}();
 
 })(["{arguments}"], document);
