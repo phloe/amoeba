@@ -26,5 +26,6 @@
 			firstScript = script;
 		}
 	}();
+	
 
 })(["{arguments}"], document);
