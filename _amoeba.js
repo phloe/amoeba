@@ -26,7 +26,7 @@
 	},
 
 	request = function (url, func, data, mode, async) {
-		var x = new XMLHttpRequest();
+		var xhr = new XMLHttpRequest();
 		mode = mode || "get";
 		async = (async === undefined) ? true : async;
 		data = toQuery(data);
@@ -34,12 +34,12 @@
 			url += "?" + data;
 			data = null;
 		}
-		x.open(mode, url, async);
-		x.onreadystatechange = function () {
-			if (x.readyState == 4) func(x);
+		xhr.open(mode, url, async);
+		xhr.onreadystatechange = function () {
+			if (xhr.readyState == 4) func(xhr.responseText, xhr.responseXML);
 		};
-		x.send(data);
-		return x;
+		xhr.send(data);
+		return xhr;
 	},
 
 	type = function (subject) {
