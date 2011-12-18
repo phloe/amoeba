@@ -14,7 +14,7 @@ It's used in the bookmarklet builder on [amoeba-js.net](http://amoeba-js.net/).
 
 ## Usage
 
-The API is exposed as a variable in global scope (window); by default as `_amoeba` - but you can set it to whatever namespace you want.
+The API is exposed through a variable in global scope (window); by default as `_amoeba` - but you can set it to whatever namespace you want.
 
 If you wanted to use it as `foobar` all you need to do is add `?name=foobar` to the end of the source:
 
@@ -24,5 +24,5 @@ If you wanted to use it as `foobar` all you need to do is add `?name=foobar` to 
 <hr/>
 
 
-<super>*</super> API is subject to change drasticly and documentation is rather spotty :D
+<super>*</super> API is subject to change drastically and documentation is rather spotty :D
 
