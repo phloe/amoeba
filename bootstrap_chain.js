@@ -7,7 +7,7 @@
 	
 		firstScript = doc.getElementsByTagName(tag)[0];
 	
-	function load (script) {
+	(function load (script) {
 		if (index) {
 			script = doc.createElement(tag);
             state = script.onreadystatechange;
@@ -25,7 +25,6 @@
 			script.src = scripts[--index];
 			firstScript = script;
 		}
-	}();
-	
+	})();
 
 })(["{arguments}"], document);
