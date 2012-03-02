@@ -1,7 +1,6 @@
 (function(scripts, doc){
 
-	var state, 
-		tag = "script",
+	var tag = "script",
 	
 		index = scripts.length,
 	
