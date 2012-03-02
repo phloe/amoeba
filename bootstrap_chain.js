@@ -10,10 +10,10 @@
 	(function load (script) {
 		if (index) {
 			script = doc.createElement(tag);
-            state = script.onreadystatechange;
-			if (state !== undefined) {
-				state = function () {
-					if (script.readyState == "loaded") {
+			if (script.readyState) {
+				script.onreadystatechange = function () {
+					if (script.readyState == "loaded" || script.readyState == "complete") {
+						script.onreadystatechange = null;
 						load();
 					}
 				};
