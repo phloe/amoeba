@@ -8,7 +8,7 @@ Amoeba was made from the following assumptions:
 
 2. Only modern browsers need to be supported; users are expected to be intermediate to advanced users.
 
-It currently weighs in at just above 2Kb minified and gzipped.
+It currently weighs in at just 1.8Kb minified and gzipped.
 
 It's used in the bookmarklet builder on [amoeba-js.net](http://amoeba-js.net/).
 
