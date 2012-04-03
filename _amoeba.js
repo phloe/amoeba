@@ -467,7 +467,7 @@
 			Iterates through the supplied subject and calls the callback function on each step.
 
 		Arguments:
-			subject -	(number, string, array, object or htmlcollection) Variable to each through. If a number is supplied the callback function is called that number of times.
+			subject -	(number, string, array, object or htmlcollection) Variable to iterate through. If a number is supplied the callback function is called that number of times.
 			func -		(function) Callback function to call every iteration step.
 			bind -		(object) Optional. Variable to bind the this keyword to inside the callback function.
 
@@ -898,12 +898,12 @@
 		},
 
 		on: function (event, func) {
-			addEvent(this.element, event, func);
+			on(this.element, event, func);
 			return this;
 		},
 
 		off: function (event, func) {
-			removeEvent(this.element, event, func);
+			off(this.element, event, func);
 			return this;
 		}
 
