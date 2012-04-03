@@ -18,7 +18,7 @@ The API is exposed through a variable in global scope (window); by default as `_
 
 If you wanted to use it as `foobar` all you need to do is add `?name=foobar` to the end of the source:
 
-	<script src="http://amoeba-js.net/js/?name=foobar"></script>
+	<script src="//amoeba-js.net/js/?name=foobar"></script>
 
 
 <hr/>
