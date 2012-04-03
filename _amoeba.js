@@ -354,106 +354,14 @@
 			function(element, child){ return !!(element.compareDocumentPosition(child) & 16); } :
  			function(element, child){ return element.contains(child); },
 
-	attributeMatch = function (element, attributes) {
-		var j = attributes.length,
-			attribute,
-			matchValue,
-			m,
-			name,
-			operator,
-			value,
-			actualValue;
+	name = "atchesSelector",
+	
+	docEl = document.documentElement,
 
-		while (j--) {
-			attribute = /^([a-zA-Z0-9_-]*[^~|^$*!=])(?:([~|^$*!]?)=['"]?([^'"]*)['"]?)?$/.exec(attributes[j]);
-			attribute.shift();
-			name = attribute[0];
-			operator = attribute[1];
-			value = attribute[2];
-			actualValue = element.getAttribute(name);
-			m = (matchValue !== false);
-			if (actualValue !== null && m) {
-				if (value) {
-					switch (operator) {
+	matchesSelector = docEl["m" + name] || docEl["mozM" + name] || docEl["webkitM" + name] || docEl["msM" + name] || docEl["oM" + name],
 
-						case "~":
-							m = (actualValue.split(" ").indexOf(value) > -1);
-							break;
-
-						case "|":
-							m = (actualValue === value || actualValue.indexOf(value + "-") === 0);
-							break;
-
-						case "^":
-							m = (actualValue.indexOf(value) === 0);
-							break;
-
-						case "$":
-							m = (actualValue.indexOf(value) === actualValue.length - value.length);
-							break;
-
-						case "*":
-							m = (actualValue.indexOf(value) > -1);
-							break;
-
-						case "!":
-							m = (actualValue !== value);
-							break;
-
-						default:
-							m = (actualValue === value);
-							break;
-
-					}
-				}
-			}
-			else if (m) {
-				m = false;
-			}
-			if (!m) {
-				matchValue = m;
-			}
-		}
-
-		return matchValue;
-	},
-
-	match = function (element, selector) {
-		var tag, id, className, attributes;
-
-		if (type(selector) == "element") {
-			return (elements === selector);
-		}
-
-		selector = /^([^#.[]+)?(?:#([^.[]+))?(?:\.([^#[]+))?((?:\[[^\]]+\])+)?$/.exec(selector);
-		selector = selector && selector.slice(1) || [];
-
-		tag = selector[0];
-
-		if (tag && (tag !== "*" && tag !== element.nodeName.toLowerCase())) {
-			return false;
-		}
-
-		id = selector[1];
-
-		if (id && element.id != id) {
-			return false;
-		}
-
-		className = selector[2];
-
-		if (className && element.className.split(" ").indexOf(className) < 0) {
-			return false;
-		}
-
-		attributes = (selector[3]) ? selector[3].slice(1, -1).split("][") : [];
-
-		if (attributes.length) {
-			return attributeMatch(element, attributes);
-		}
-		else {
-			return true;
-		}
+	match = function (element, selector) {	
+		return matchesSelector.call(element, selector);
 	},
 
 	addClass = function (element, className) {
@@ -474,20 +382,12 @@
 		}
 	},
 
-	addEvent = (global.addEventListener) ? function (element, event, func) {
+	addEvent = function (element, event, func) {
 		element.addEventListener(event, func, false);
-	} : (global.attachEvent) ? function (element, event, func) {
-		element.attachEvent("on" + event, func);
-	} : function (element, event, func) {
-		element["on" + event] = func;
 	},
 
-	removeEvent = (global.removeEventListener) ? function (element, event, func) {
+	removeEvent = function (element, event, func) {
 		element.removeEventListener(event, func, false);
-	} : (global.detachEvent) ? function (element, event, func) {
-		element.detachEvent("on" + event, func);
-	} : function (element, event, func) {
-		element["on" + event] = null;
 	},
 
 	body = document.body, script = get("script[href*='?name=']"),
