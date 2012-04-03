@@ -65,7 +65,7 @@
 		return type;
 	},
 
-	iterate = function (subject, func, bind) {
+	each = function (subject, func, bind) {
 		var key,
 			i;
 
@@ -102,7 +102,7 @@
 	// Object
 
 	extend = function (subject, properties) {
-		iterate(properties, function (value, key) {
+		each(properties, function (value, key) {
 			var valueType = type(value);
 			if (valueType === "array" || valueType === "object") {
 				subject[key] = subject[key] || {};
@@ -117,7 +117,7 @@
 
 	toQuery = function(subject){
 		var string = [], urlEncode = encodeURIComponent;
-		iterate(subject, function (value, key) {
+		each(subject, function (value, key) {
 			string.push(
 				urlEncode(key) + "=" + urlEncode(value)
 			);
@@ -129,7 +129,7 @@
 
 	parseQuery = function(subject){
 		var object = {}, urlDecode = decodeURIComponent;
-		iterate(subject.replace(/(^[^?]*\?)|(#[^#]*$)/g, "").split("&"), function (pair) {
+		each(subject.replace(/(^[^?]*\?)|(#[^#]*$)/g, "").split("&"), function (pair) {
 			pair = pair.split("=");
 			object[urlDecode(pair[0])] = (pair[1]) ? urlDecode(pair[1]) : null;
 		});
@@ -139,7 +139,7 @@
 	template = function (template, object, delimiters) {
 		var string = template;
 		delimiters = delimiters || ["{", "}"];
-		iterate(object, function (value, key) {
+		each(object, function (value, key) {
 			string = string.replace(delimiters[0] + key + delimiters[1], value);
 		});
 		return string;
@@ -248,15 +248,10 @@
 			wrapped = parent;
 			parent = null;
 		}
+		
+		element = (parent || document).querySelector(selector);
 
-		if (parent) {
-			element = getAll(selector);
-			element = element && element[0] || false;
-		}
-		else {
-			element = document.querySelector(selector);
-		}
-		return (element) ? ((wrapped) ? amoeba(element) : element) : false;
+		return (element && wrapped) ? amoeba(element) : element;
 	},
 
 	getAll = function (selector, parent, wrapped) {
@@ -382,11 +377,11 @@
 		}
 	},
 
-	addEvent = function (element, event, func) {
+	on = function (element, event, func) {
 		element.addEventListener(event, func, false);
 	},
 
-	removeEvent = function (element, event, func) {
+	off = function (element, event, func) {
 		element.removeEventListener(event, func, false);
 	},
 
@@ -468,11 +463,11 @@
 		type: type,
 
 		/*
-		Function: iterate
+		Function: each
 			Iterates through the supplied subject and calls the callback function on each step.
 
 		Arguments:
-			subject -	(number, string, array, object or htmlcollection) Variable to iterate through. If a number is supplied the callback function is called that number of times.
+			subject -	(number, string, array, object or htmlcollection) Variable to each through. If a number is supplied the callback function is called that number of times.
 			func -		(function) Callback function to call every iteration step.
 			bind -		(object) Optional. Variable to bind the this keyword to inside the callback function.
 
@@ -480,7 +475,7 @@
 			(start code)
 			var recipients = ["world", "steve", "dave"];
 
-			amoeba.iterate(recipients, function (recipient, i) {
+			amoeba.each(recipients, function (recipient, i) {
 				alert("Hello, " + recipient + ". You are number " + i);
 			});
 
@@ -492,7 +487,7 @@
 
 		*/
 
-		iterate: iterate,
+		each: each,
 
 
 		/*
@@ -822,7 +817,7 @@
 		removeClass: removeClass,
 
 		/*
-		Function: addEvent
+		Function: on
 			Returns true or false for whether the supplied selector matches the element.
 
 		Arguments:
@@ -834,10 +829,10 @@
 			(end)
 		*/
 
-		addEvent: addEvent,
+		on: on,
 
 		/*
-		Function: removeEvent
+		Function: off
 			Returns true or false for whether the supplied selector matches the element.
 
 		Arguments:
@@ -849,7 +844,7 @@
 			(end)
 		*/
 
-		removeEvent: removeEvent
+		off: off
 
 	});
 
@@ -902,12 +897,12 @@
 			return this;
 		},
 
-		addEvent: function (event, func) {
+		on: function (event, func) {
 			addEvent(this.element, event, func);
 			return this;
 		},
 
-		removeEvent: function (event, func) {
+		off: function (event, func) {
 			removeEvent(this.element, event, func);
 			return this;
 		}
