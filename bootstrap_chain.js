@@ -6,15 +6,15 @@
 			// <featureDetect>
 			(doc.querySelector) ? 
 			// </featureDetect>
-			// <querySelector>
+			// <modern>
 				doc.querySelector(tag)
-			// </querySelector>
+			// </modern>
 			// <featureDetect>
 			: 
 			// </featureDetect>
-			// <getElementsByTagName>
+			// <IE>
 				doc.getElementsByTagName(tag)[0]
-			// </getElementsByTagName>
+			// </IE>
 			;
 	
 	(function load (script) {
@@ -23,21 +23,21 @@
 			// <featureDetect>
 			if (script.readyState) {
 			// </featureDetect>
-			// <readyState>
+			// <IE>
 				script.onreadystatechange = function () {
 					if (script.readyState == "loaded" || script.readyState == "complete") {
 						script.onreadystatechange = null;
 						load();
 					}
 				};
-			// </readyState>
+			// </IE>
 			// <featureDetect>
 			}
 			else {
 			// </featureDetect>
-			// <onload>
+			// <modern>
 				script.onload = load;
-			// </onload>
+			// </modern>
 			// <featureDetect>
 			}
 			// </featureDetect>
