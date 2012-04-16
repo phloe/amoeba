@@ -377,11 +377,11 @@
 		}
 	},
 
-	on = function (element, event, func) {
+	on = function (event, element, func) {
 		element.addEventListener(event, func, false);
 	},
 
-	off = function (element, event, func) {
+	off = function (event, element, func) {
 		element.removeEventListener(event, func, false);
 	},
 
@@ -898,12 +898,12 @@
 		},
 
 		on: function (event, func) {
-			on(this.element, event, func);
+			on(event, this.element, func);
 			return this;
 		},
 
 		off: function (event, func) {
-			off(this.element, event, func);
+			off(event, this.element, func);
 			return this;
 		}
 
