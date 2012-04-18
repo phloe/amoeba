@@ -87,12 +87,14 @@
 	},
 
 	// Object
-
+	
 	extend = function (subject, properties) {
 		each(properties, function (value, key) {
 			var valueType = type(value);
 			if (valueType === "array" || valueType === "object") {
-				subject[key] = subject[key] || {};
+				if (!(key in subject)) {
+					subject[key] = (valueType === "array") ? [] : {};
+				}
 				extend(subject[key], value);
 			}
 			else {
