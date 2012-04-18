@@ -863,20 +863,20 @@
 			return getAll(selector, this.element);
 		},
 
-		getChildren: function (selector) {
-			return getChildren(this.element, selector, true);
+		getChildren: function (selector, wrapped) {
+			return getChildren(this.element, selector, wrapped);
 		},
 
-		getSiblings: function (selector) {
-			return getSiblings(this.element, selector, true);
+		getSiblings: function (selector, wrapped) {
+			return getSiblings(this.element, selector, wrapped);
 		},
 
-		getNext: function (selector) {
-			return getNext(this.element, selector, true);
+		getNext: function (selector, wrapped) {
+			return getNext(this.element, selector, wrapped);
 		},
 
-		getPrevious: function (selector) {
-			return getPrevious(this.element, selector, true);
+		getPrevious: function (selector, wrapped) {
+			return getPrevious(this.element, selector, wrapped);
 		},
 
 		contains: function (element) {
