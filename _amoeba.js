@@ -7,20 +7,7 @@
 	load = function (url, func, s) {
 		var tag = "script",
 			script = create(tag, get(tag), "before");
-		if (func) {
-			if (script.readyState) {
-				script.onreadystatechange = function () {
-					if (script.readyState == "loaded" || script.readyState == "complete") {
-						script.onreadystatechange = null;
-						func();
-					}
-				};
-			}
-			else {
-				script.onload = func;
-			}
-
-		}
+		script.onload = func;
 		script.src = url;
 		return script;
 	},
@@ -35,8 +22,8 @@
 			data = null;
 		}
 		xhr.open(mode, url, async);
-		xhr.onreadystatechange = function () {
-			if (xhr.readyState == 4) func(xhr.responseText, xhr.responseXML);
+		xhr.onload = function () {
+			func(xhr.responseText, xhr.responseXML);
 		};
 		xhr.send(data);
 		return xhr;
