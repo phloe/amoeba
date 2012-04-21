@@ -1,6 +1,6 @@
 (function (global, document) {
 
-    var amoeba = function (callback) {
+    var _amoeba = global._amoeba = function (callback) {
     	callback.call(global, get, getAll, api);
 	},
 
