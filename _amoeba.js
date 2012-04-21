@@ -1,14 +1,15 @@
 (function (global, document) {
 
-    var amoeba = function (element) {
-		return new wrapper(element);
+    var amoeba = function (callback) {
+    	callback.call(global, get, getAll, api);
 	},
 
 	load = function (url, func, s) {
 		var tag = "script",
-			script = create(tag, get(tag), "before");
-		script.onload = func;
-		script.src = url;
+			script = create(tag, get(tag).el, "before"),
+			element = script.el;
+		element.onload = func;
+		element.src = url;
 		return script;
 	},
 
@@ -137,10 +138,11 @@
 	// DOM
 
 	wrapper = function (element) {
-		this.element = element || null;
+		this.el = element || null;
+		return this;
 	},
 
-	create = function (tag, options, parent, context, wrapped) {
+	create = function (tag, options, parent, context) {
 		if (type(options) == "element") {
 			context = parent || null;
 			parent = options;
@@ -153,7 +155,7 @@
 		if (parent) {
 			insertSingle(element, parent, context);
 		}
-		return (wrapped) ? amoeba(element) : element;
+		return new wrapper(element);
 	},
 
 	insertSingle = function (element, parent, context) {
@@ -205,7 +207,7 @@
 		}
 	},
 
-	insert = function (contents, parent, context) {
+	insert = function (contents, context) {
 		var contentType = type(contents),
 			i,
 			content;
@@ -216,10 +218,11 @@
 			content = contents[i];
 			insertSingle(
 				(content.nodeName) ? content : document.createTextNode(content),
-				parent,
+				this.el,
 				context
 			);
 		}
+		return this;
 	},
 
 	/*
@@ -230,44 +233,37 @@
 
 	*/
 
-	get = function (selector, parent, wrapped) {
+	get = function (selector, parent) {
 		var element;
-
-		if (typeof parent == "boolean") {
-			wrapped = parent;
-			parent = null;
-		}
 		
-		element = (parent || document).querySelector(selector);
+		parent = parent || document;
+		
+		element = parent.querySelector(selector);
 
-		return (element && wrapped) ? amoeba(element) : element;
+		element = element? new wrapper(element) : null;
+
+		return element;
 	},
 
-	getAll = function (selector, parent, wrapped) {
-		if (typeof parent == "boolean") {
-			wrapped = parent;
-			parent = null;
-		}
+	getAll = function (selector, parent) {
 		var nodelist = (parent || document).querySelectorAll(selector),
 			node, i = nodelist.length, elements = [];
 
 		while (i--) {
 			node = nodelist[i];
-			elements[i] = (wrapped) ? amoeba(node) : node;
+			elements[i] = new wrapper(node);
 		}
 
 		return elements;
 	},
 
-	getChildren = function (element, selector, wrapped) {
-		var nodelist = element.childNodes,
+	getChildren = function (selector) {
+		var nodelist = this.el.childNodes,
 			node, i = 0, l = nodelist.length, elements = [];
 
 		for (; i < l, node = nodelist[i]; i++) {
 			if (node.nodeType === 1 && match(node, selector)) {
-				elements.push(
-					(wrapped) ? amoeba(node) : node
-				);
+				elements.push(new wrapper(node));
 			}
 		}
 
@@ -275,15 +271,13 @@
 
 	},
 
-	getSiblings = function (element, selector, wrapped) {
-		var node = element.parentNode.firstChild,
+	getSiblings = function (selector) {
+		var node = this.el.parentNode.firstChild,
 			elements = [];
 
 		while (node) {
 			if (node != parent && node.nodeType === 1 && match(node, selector)) {
-				elements.push(
-					(wrapped) ? amoeba(node) : node
-				);
+				elements.push(new wrapper(node));
 			}
 			node = node.nextSibling;
 		}
@@ -292,13 +286,13 @@
 
 	},
 
-	getNext = function(element, selector, wrapped){
-		var node = element.nextSibling;
+	getNext = function(selector){
+		var node = this.el.nextSibling;
 
 		while (node) {
 			if (node.nodeType === 1) {
 				if (match(node, selector)) {
-					return (wrapped) ? amoeba(node) : node;
+					return new wrapper(node);
 				}
 				else {
 					return false;
@@ -310,13 +304,13 @@
 		return false;
 	},
 
-	getPrevious = function(element, selector, wrapped){
-		var node = element.previousSibling;
+	getPrevious = function(element, selector){
+		var node = this.el.previousSibling;
 
 		while (node) {
 			if (node.nodeType === 1) {
 				if (match(node, selector)) {
-					return (wrapped) ? amoeba(node) : node;
+					return new wrapper(node);
 				}
 				else {
 					return false;
@@ -335,8 +329,8 @@
 	*/
 
 	contains = (global.Node && Node.prototype && Node.prototype.compareDocumentPosition) ?
-			function(element, child){ return !!(element.compareDocumentPosition(child) & 16); } :
- 			function(element, child){ return element.contains(child); },
+			function(child){ return !!(this.el.compareDocumentPosition(child) & 16); } :
+ 			function(child){ return this.el.contains(child); },
 
 	name = "atchesSelector",
 	
@@ -348,8 +342,9 @@
 		return matchesSelector.call(element, selector);
 	},
 
-	addClass = function (element, className) {
-		var classList = element.className.split(/\s+/),
+	addClass = function (className) {
+		var element = this.el,
+			classList = element.className.split(/\s+/),
 			index = classList.indexOf(className);
 		if (index == -1) {
 			classList.push(className);
@@ -357,8 +352,9 @@
 		}
 	},
 
-	removeClass = function (element, className) {
-		var classList = element.className.split(/\s+/),
+	removeClass = function (className) {
+		var element = this.el,
+			classList = element.className.split(/\s+/),
 			index = classList.indexOf(className);
 		if (index > -1) {
 			classList.splice(index, 1);
@@ -366,20 +362,16 @@
 		}
 	},
 
-	on = function (event, element, func) {
-		element.addEventListener(event, func, false);
+	on = function (event, func) {
+		this.el.addEventListener(event, func, false);
 	},
 
-	off = function (event, element, func) {
-		element.removeEventListener(event, func, false);
+	off = function (event, func) {
+		this.el.removeEventListener(event, func, false);
 	},
-
-	body = document.body, script = get("script[href*='?name=']"),
-
-	namespace = script && script.src.replace(/^[^?]+\?name=/, "") || "_amoeba";
-
-	global[namespace] = extend(amoeba, {
-
+	
+	api = {
+	
 		/*
 		Function: load
 			Loads a script onto the page and optionally executes a callback function on load.
@@ -400,7 +392,7 @@
 
 			(end)
 		*/
-
+		
 		load: load,
 
 		/*
@@ -422,7 +414,7 @@
 			(start code)
 			(end)
 		*/
-
+		
 		request: request,
 
 		/*
@@ -448,7 +440,7 @@
 			Kangax
 
 		*/
-
+		
 		type: type,
 
 		/*
@@ -475,7 +467,7 @@
 			(end)
 
 		*/
-
+		
 		each: each,
 
 
@@ -503,7 +495,7 @@
 			(end)
 
 		*/
-
+		
 		extend: extend,
 
 		/*
@@ -526,7 +518,7 @@
 			// myQueryString = "message=hello&recipient=world";
 			(end)
 		*/
-
+		
 		toQuery: toQuery,
 
 		/*
@@ -550,6 +542,7 @@
 			(end)
 		*/
 
+		
 		parseQuery: parseQuery,
 
 		/*
@@ -575,7 +568,7 @@
 			// myMessage = "hello, world!";
 			(end)
 		*/
-
+		
 		template: template,
 
 		/*
@@ -611,8 +604,18 @@
 			//	myElement = <button style="background-color: red; border-color: green; color: green;" onclick="alert(\"hello, world!\");">click</button>
 			(end)
 		*/
+		
+		create: create
+		
+	},
 
-		create:	create,
+	body = document.body, script = get("script[href*='?name=']"),
+
+	namespace = script && script.el.src.replace(/^[^?]+\?name=/, "") || "_amoeba";
+
+	global[namespace] = amoeba;
+
+	wrapper.prototype = {
 
 		/*
 		Function: insert
@@ -653,7 +656,8 @@
 			(end)
 		*/
 
-		get: get,
+		get: function (selector) {
+			return get(selector, this.el);
 
 		/*
 		Function: getAll
@@ -682,8 +686,12 @@
 			//};
 			(end)
 		*/
+		
+		},
 
-		getAll: getAll,
+		getAll: function (selector) {
+			return getAll(selector, this.el);
+		},
 
 		/*
 		Function: getChildren
@@ -834,67 +842,6 @@
 		*/
 
 		off: off
-
-	});
-
-	wrapper.prototype = {
-
-		insert: function (content, context) {
-			insert(content, this.element, context);
-			return this;
-		},
-
-		get: function (selector) {
-			return get(selector, this.element);
-		},
-
-		getAll: function (selector) {
-			return getAll(selector, this.element);
-		},
-
-		getChildren: function (selector, wrapped) {
-			return getChildren(this.element, selector, wrapped);
-		},
-
-		getSiblings: function (selector, wrapped) {
-			return getSiblings(this.element, selector, wrapped);
-		},
-
-		getNext: function (selector, wrapped) {
-			return getNext(this.element, selector, wrapped);
-		},
-
-		getPrevious: function (selector, wrapped) {
-			return getPrevious(this.element, selector, wrapped);
-		},
-
-		contains: function (element) {
-			return contains(this.element, element);
-		},
-
-		match: function (selector) {
-			return match(this.element, selector);
-		},
-
-		addClass: function (className) {
-			addClass(this.element, className);
-			return this;
-		},
-
-		removeClass: function (className) {
-			removeClass(this.element, className);
-			return this;
-		},
-
-		on: function (event, func) {
-			on(event, this.element, func);
-			return this;
-		},
-
-		off: function (event, func) {
-			off(event, this.element, func);
-			return this;
-		}
 
 	};
 
