@@ -234,15 +234,13 @@
 	*/
 
 	get = function (selector, parent) {
-		var element;
-		
-		parent = parent || document;
-		
-		element = parent.querySelector(selector);
+		if (typeof selector != "string") {
+			return new wrapper(selector);
+		}
 
-		element = element? new wrapper(element) : null;
+		var element = (parent || document).querySelector(selector);
 
-		return element;
+		return element ? new wrapper(element) : null;
 	},
 
 	getAll = function (selector, parent) {
