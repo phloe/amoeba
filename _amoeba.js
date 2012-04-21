@@ -159,7 +159,7 @@
 	},
 
 	insertSingle = function (element, parent, context) {
-		parent = parent || body;
+		parent = parent || document.body;
 		if (context === undefined) {
 			context = "bottom";
 		}
@@ -605,13 +605,7 @@
 		
 		create: create
 		
-	},
-
-	body = document.body, script = get("script[href*='?name=']"),
-
-	namespace = script && script.el.src.replace(/^[^?]+\?name=/, "") || "_amoeba";
-
-	global[namespace] = amoeba;
+	};
 
 	wrapper.prototype = {
 
