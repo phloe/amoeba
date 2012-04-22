@@ -17,15 +17,17 @@
 		var xhr = new XMLHttpRequest();
 		mode = mode || "GET";
 		async = (async === undefined) ? true : async;
-		data = toQuery(data);
-		if (data && mode == "GET") {
-			url += "?" + data;
-			data = null;
-		}
-		else {
-			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		if (data) {
+			data = toQuery(data);
+			if (mode == "GET") {
+				url += "?" + data;
+				data = null;
+			}
 		}
 		xhr.open(mode, url, async);
+		if (mode == "POST") {
+			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		}
 		xhr.onload = function () {
 			func(xhr.responseText, xhr.responseXML);
 		};
@@ -334,11 +336,9 @@
 			function(child){ return !!(this.el.compareDocumentPosition(child) & 16); } :
  			function(child){ return this.el.contains(child); },
 
-	name = "atchesSelector",
-	
 	html = document.documentElement,
 
-	matchesSelector = html["m" + name] || html["mozM" + name] || html["webkitM" + name] || html["msM" + name] || html["oM" + name],
+	matchesSelector = html.matchesSelector || html.mozMatchesSelector || html.webkitMatchesSelector || html.msMatchesSelector || html.oMatchesSelector,
 
 	match = function (element, selector) {	
 		return matchesSelector.call(element, selector);
