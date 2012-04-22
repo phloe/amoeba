@@ -1,7 +1,7 @@
 (function (global, document) {
 
-    var _amoeba = global._amoeba = function (callback) {
-    	callback.call(global, get, getAll, api);
+	var _amoeba = global._amoeba = function (callback) {
+		callback.call(global, get, getAll, api);
 	},
 
 	load = function (url, func, s) {
@@ -15,12 +15,15 @@
 
 	request = function (url, func, data, mode, async) {
 		var xhr = new XMLHttpRequest();
-		mode = mode || "get";
+		mode = mode || "GET";
 		async = (async === undefined) ? true : async;
 		data = toQuery(data);
-		if (data && mode == "get") {
+		if (data && mode == "GET") {
 			url += "?" + data;
 			data = null;
+		}
+		else {
+			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		}
 		xhr.open(mode, url, async);
 		xhr.onload = function () {
@@ -257,9 +260,10 @@
 
 	getChildren = function (selector) {
 		var nodelist = this.el.childNodes,
-			node, i = 0, l = nodelist.length, elements = [];
+			node, elements = [];
 
-		for (; i < l, node = nodelist[i]; i++) {
+		for (var i = 0, l = nodelist.length; i < l; i++) {
+			node = nodelist[i];
 			if (node.nodeType === 1 && match(node, selector)) {
 				elements.push(new wrapper(node));
 			}
