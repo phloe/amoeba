@@ -136,10 +136,6 @@
 	},
 
 	// DOM
-	
-	wrap = function (element) {
-		return new wrapper(element);
-	},
 
 	wrapper = function (element) {
 		this.el = element || null;
@@ -159,7 +155,7 @@
 		if (parent) {
 			insertSingle(element, parent, context);
 		}
-		return wrap(element);
+		return new wrapper(element);
 	},
 
 	insertSingle = function (element, parent, context) {
@@ -239,12 +235,12 @@
 
 	get = function (selector, parent) {
 		if (typeof selector != "string") {
-			return wrap(selector);
+			return new wrapper(selector);
 		}
 
 		var element = (parent || document).querySelector(selector);
 
-		return element ? wrap(element) : null;
+		return element ? new wrapper(element) : null;
 	},
 
 	getAll = function (selector, parent) {
@@ -253,7 +249,7 @@
 
 		while (i--) {
 			node = nodelist[i];
-			elements[i] = wrap(node);
+			elements[i] = new wrapper(node);
 		}
 
 		return elements;
@@ -265,7 +261,7 @@
 
 		for (; i < l, node = nodelist[i]; i++) {
 			if (node.nodeType === 1 && match(node, selector)) {
-				elements.push(wrap(node));
+				elements.push(new wrapper(node));
 			}
 		}
 
@@ -279,7 +275,7 @@
 
 		while (node) {
 			if (node != parent && node.nodeType === 1 && match(node, selector)) {
-				elements.push(wrap(node));
+				elements.push(new wrapper(node));
 			}
 			node = node.nextSibling;
 		}
@@ -294,7 +290,7 @@
 		while (node) {
 			if (node.nodeType === 1) {
 				if (match(node, selector)) {
-					return wrap(node);
+					return new wrapper(node);
 				}
 				else {
 					return false;
@@ -312,7 +308,7 @@
 		while (node) {
 			if (node.nodeType === 1) {
 				if (match(node, selector)) {
-					return wrap(node);
+					return new wrapper(node);
 				}
 				else {
 					return false;
