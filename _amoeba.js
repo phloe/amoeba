@@ -136,6 +136,10 @@
 	},
 
 	// DOM
+	
+	wrap = function (element) {
+		return new wrapper(element);
+	},
 
 	wrapper = function (element) {
 		this.el = element || null;
@@ -155,7 +159,7 @@
 		if (parent) {
 			insertSingle(element, parent, context);
 		}
-		return new wrapper(element);
+		return wrap(element);
 	},
 
 	insertSingle = function (element, parent, context) {
@@ -235,12 +239,12 @@
 
 	get = function (selector, parent) {
 		if (typeof selector != "string") {
-			return new wrapper(selector);
+			return wrap(selector);
 		}
 
 		var element = (parent || document).querySelector(selector);
 
-		return element ? new wrapper(element) : null;
+		return element ? wrap(element) : null;
 	},
 
 	getAll = function (selector, parent) {
@@ -249,7 +253,7 @@
 
 		while (i--) {
 			node = nodelist[i];
-			elements[i] = new wrapper(node);
+			elements[i] = wrap(node);
 		}
 
 		return elements;
@@ -261,7 +265,7 @@
 
 		for (; i < l, node = nodelist[i]; i++) {
 			if (node.nodeType === 1 && match(node, selector)) {
-				elements.push(new wrapper(node));
+				elements.push(wrap(node));
 			}
 		}
 
@@ -275,7 +279,7 @@
 
 		while (node) {
 			if (node != parent && node.nodeType === 1 && match(node, selector)) {
-				elements.push(new wrapper(node));
+				elements.push(wrap(node));
 			}
 			node = node.nextSibling;
 		}
@@ -290,7 +294,7 @@
 		while (node) {
 			if (node.nodeType === 1) {
 				if (match(node, selector)) {
-					return new wrapper(node);
+					return wrap(node);
 				}
 				else {
 					return false;
@@ -308,7 +312,7 @@
 		while (node) {
 			if (node.nodeType === 1) {
 				if (match(node, selector)) {
-					return new wrapper(node);
+					return wrap(node);
 				}
 				else {
 					return false;
@@ -332,9 +336,9 @@
 
 	name = "atchesSelector",
 	
-	docEl = document.documentElement,
+	html = document.documentElement,
 
-	matchesSelector = docEl["m" + name] || docEl["mozM" + name] || docEl["webkitM" + name] || docEl["msM" + name] || docEl["oM" + name],
+	matchesSelector = html["m" + name] || html["mozM" + name] || html["webkitM" + name] || html["msM" + name] || html["oM" + name],
 
 	match = function (element, selector) {	
 		return matchesSelector.call(element, selector);
