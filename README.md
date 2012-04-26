@@ -24,7 +24,7 @@ Use it in a script like this:
 		var foo = $("#foo");
 		// do stuff with foo
 		_.each($$("div.bar[title]"), function (bar) {
-			// do stuff bar
+			// do stuff with bar
 		});
 	});
 
