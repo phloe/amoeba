@@ -8,17 +8,25 @@ Amoeba was made from the following assumptions:
 
 2. Only modern browsers need to be supported; users are expected to be intermediate to advanced users.
 
-It currently weighs in at just 1.8Kb minified and gzipped.
+It currently weighs in at just 1.6Kb minified and gzipped.
 
 It's used in the bookmarklet builder on [amoeba-js.net](http://amoeba-js.net/).
 
 ## Usage
 
-The API is exposed through a variable in global scope (window); by default as `_amoeba` - but you can set it to whatever namespace you want.
+Include the API like so:
 
-If you wanted to use it as `foobar` all you need to do is add `?name=foobar` to the end of the source:
+	<script src="//amoeba-js.net/js/"></script>
 
-	<script src="//amoeba-js.net/js/?name=foobar"></script>
+Use it in a script like this:
+
+	_amoeba(function($, $$, _){
+		var foo = $("#foo");
+		// do stuff with foo
+		_.each($$("div.bar[title]"), function (bar) {
+			// do stuff bar
+		});
+	});
 
 
 <hr/>
