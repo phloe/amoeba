@@ -1,7 +1,7 @@
 (function (global, document) {
 
 	var _amoeba = global._amoeba = function (callback) {
-		callback.call(global, get, getAll, api);
+		callback(get, getAll, api);
 	},
 
 	load = function (url, func, s) {
