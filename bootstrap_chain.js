@@ -1,25 +1,10 @@
 (function(scripts, doc){
 
-	var tag = "script",
-		index = scripts.length,
-		firstScript = 
-			// <featureDetect>
-			(doc.querySelector) ? 
-			// </featureDetect>
-			// <modern>
-				doc.querySelector(tag)
-			// </modern>
-			// <featureDetect>
-			: 
-			// </featureDetect>
-			// <IE>
-				doc.getElementsByTagName(tag)[0]
-			// </IE>
-			;
+	var index = scripts.length;
 	
 	(function load (script) {
 		if (index) {
-			script = doc.createElement(tag);
+			script = doc.createElement("script");
 			// <featureDetect>
 			if (script.readyState) {
 			// </featureDetect>
@@ -41,9 +26,8 @@
 			// <featureDetect>
 			}
 			// </featureDetect>
-			firstScript.parentNode.insertBefore(script, firstScript);
+			doc.body.appendChild(script);
 			script.src = scripts[--index];
-			firstScript = script;
 		}
 	})();
 
