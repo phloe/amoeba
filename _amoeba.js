@@ -338,7 +338,7 @@
 
 	html = document.documentElement,
 
-	matchesSelector = html.matchesSelector || html.mozMatchesSelector || html.webkitMatchesSelector || html.msMatchesSelector || html.oMatchesSelector,
+	matchesSelector = html.matchesSelector || html.mozMatchesSelector || html.webkitMatchesSelector || html.msMatchesSelector || html.oMatchesSelector,
 
 	match = function (element, selector) {	
 		return matchesSelector.call(element, selector);
