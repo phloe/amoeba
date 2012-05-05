@@ -188,13 +188,13 @@
 		}
 		
 		if ( parent ) {
-			insertSingle( parent, element, context );
+			insert( parent, element, context );
 		}
 		
 		return new wrapper( element );
 	},
 
-	insertSingle = function ( parent, element, context ) {
+	insert = function ( parent, element, context ) {
 		
 		if ( context === undefined ) {
 			context = "bottom";
@@ -240,26 +240,6 @@
 		}
 		else {
 			parent.appendChild( element );
-		}
-	},
-
-	insert = function ( parent, contents, context ) {
-		var i, content, length,
-			contentType = type( contents );
-		
-		if ( contentType === "string" || contentType === "element" ) {
-			contents = [ contents ];
-		}
-		
-		length = contents.length;
-		
-		for ( i = 0; i < length; i++ ) {
-			content = contents[ i ];
-			insertSingle(
-				parent,
-				( content.nodeName ) ? content : document.createTextNode( content ),
-				context
-			);
 		}
 	},
 
@@ -668,9 +648,25 @@
 		*/
 
 		insert: function ( contents, context ) {
-			insert( this.el, contents, context );
+			var i, content, length,
+				contentType = type( contents );
 			
-			return this;	
+			if ( contentType === "string" || contentType === "element" ) {
+				contents = [ contents ];
+			}
+			
+			length = contents.length;
+			
+			for ( i = 0; i < length; i++ ) {
+				content = contents[ i ];
+				insert(
+					this.el,
+					( content.nodeName ) ? content : document.createTextNode( content ),
+					context
+				);
+			}
+		
+			return this;
 		},
 
 		/*
@@ -734,10 +730,10 @@
 		},
 
 		/*
-		Function: getChildren
+		Function: children
 		*/
 
-		getChildren: function ( selector ) {
+		children: function ( selector ) {
 			var i,
 				elements = getChildren( this.el, selector ),
 				length = elements.length;
@@ -750,10 +746,10 @@
 		},
 
 		/*
-		Function: getSiblings
+		Function: siblings
 		*/
 
-		getSiblings: function ( selector ) {
+		siblings: function ( selector ) {
 			var i,
 				elements = getSiblings( this.el, selector ),
 				length = elements.length;
@@ -766,20 +762,20 @@
 		},
 
 		/*
-		Function: getNext
+		Function: next
 		*/
 
-		getNext: function ( selector ) {
+		next: function ( selector ) {
 			var element = getNext( this.el, selector );
 			
 			return ( element ) ? new wrapper( element ) : element;
 		},
 
 		/*
-		Function: getPrevious
+		Function: prev
 		*/
 
-		getPrevious: function ( selector ) {
+		prev: function ( selector ) {
 			var element = getPrevious( this.el, selector );
 			return ( element ) ? new wrapper( element ) : element;
 		},
