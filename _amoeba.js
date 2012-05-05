@@ -1,43 +1,57 @@
-(function (global, document) {
+(function ( global, document ) {
 
-	var _amoeba = global._amoeba = function (callback) {
-		callback(get, getAll, api);
+	var _amoeba = global._amoeba = function ( callback ) {
+		callback( get, getAll, api );
 	},
 
-	load = function (url, func, s) {
-		var tag = "script",
-			script = create(tag, get(tag).el, "before"),
+	load = function ( url, callback ) {
+		var script = create( "script", document.body ),
 			element = script.el;
-		element.onload = func;
+			
+		if ( callback ) {
+			element.onload = callback;
+		}
+		
 		element.src = url;
+		
 		return script;
 	},
 
-	request = function (url, func, data, mode, async) {
+	request = function ( url, callback, data, mode, async ) {
 		var xhr = new XMLHttpRequest();
+		
 		mode = mode || "GET";
-		async = (async === undefined) ? true : async;
-		if (data) {
-			data = toQuery(data);
-			if (mode == "GET") {
+		async = ( async === undefined ) ? true : async;
+		
+		if ( data ) {
+			data = toQuery( data );
+			if ( mode === "GET" ) {
 				url += "?" + data;
 				data = null;
 			}
 		}
-		xhr.open(mode, url, async);
-		if (mode == "POST") {
-			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		
+		xhr.open( mode, url, async );
+		
+		if ( mode === "POST" ) {
+			xhr.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
 		}
-		xhr.onload = function () {
-			func(xhr.responseText, xhr.responseXML);
-		};
-		xhr.send(data);
+		
+		if ( callback ) {
+			xhr.onload = function () {
+				callback( xhr.responseText, xhr.responseXML );
+			};
+		}
+		
+		xhr.send( data );
+		
 		return xhr;
 	},
 
-	type = function (subject) {
+	type = function ( subject ) {
 		var type;
-		switch (subject) {
+		
+		switch ( subject ) {
 
 			case null:
 				type = "object";
@@ -48,134 +62,151 @@
 				break;
 
 			default:
-				type = ({}).toString.call(subject).slice(8, -1).toLowerCase();
-				if (type.indexOf("element") > -1) {
+				type = ({}).toString.call(subject).slice( 8, -1 ).toLowerCase();
+				if ( type.indexOf("element") > -1 ) {
 					type = "element";
 				}
 				break;
 
 		}
+		
 		return type;
 	},
 
-	each = function (subject, func, bind) {
-		var key,
-			i;
+	each = function ( subject, func, bind ) {
+		var key, i, length;
 
-		switch (type(subject)) {
+		switch ( type(subject) ) {
 
 			case "number":
-				for (i = 0; i < subject; i++) {
-					func.call(bind || subject, i, i);
+				for ( i = 0; i < subject; i++ ) {
+					func.call( bind || subject, i, i );
 				}
 				break;
 
 			case "string":
-				subject = subject.split("");
+				subject = subject.split( "" );
 			case "array":
 			case "nodelist":
 			case "htmlcollection":
-				for (i = 0, l = subject.length; i < l; i++) {
-					func.call(bind || subject, subject[i], i);
+				length = subject.length;
+				for ( i = 0; i < length; i++ ) {
+					func.call( bind || subject, subject[ i ], i );
 				}
 				break;
 
 			case "object":
-				for (key in subject) {
-					if (subject.hasOwnProperty(key)) {
-						func.call(bind || subject, subject[key], key);
+				for ( key in subject ) {
+					if ( subject.hasOwnProperty(key) ) {
+						func.call( bind || subject, subject[ key ], key );
 					}
 				}
 				break;
 
 		}
+		
 		return subject;
 	},
 
 	// Object
 	
-	extend = function (subject, properties) {
-		each(properties, function (value, key) {
-			var valueType = type(value);
-			if (valueType === "array" || valueType === "object") {
-				if (!(key in subject)) {
-					subject[key] = (valueType === "array") ? [] : {};
+	extend = function ( subject, properties ) {
+		each(properties, function ( value, key ) {
+			var valueType = type( value );
+			if ( valueType === "array" || valueType === "object" ) {
+				if ( !(key in subject) ) {
+					subject[ key ] = ( valueType === "array" ) ? [] : {};
 				}
-				extend(subject[key], value);
+				extend( subject[ key ], value );
 			}
 			else {
-				subject[key] = value;
+				subject[ key ] = value;
 			}
 		});
+		
 		return subject;
 	},
 
-	toQuery = function(subject){
-		var string = [], urlEncode = encodeURIComponent;
-		each(subject, function (value, key) {
+	toQuery = function ( subject ) {
+		var string = [],
+			urlEncode = encodeURIComponent;
+		
+		each( subject, function ( value, key ) {
 			string.push(
-				urlEncode(key) + "=" + urlEncode(value)
+				urlEncode( key ) + "=" + urlEncode( value )
 			);
 		});
-		return string.join("&");
+		
+		return string.join( "&" );
 	},
 
 	// String
 
-	parseQuery = function(subject){
-		var object = {}, urlDecode = decodeURIComponent;
-		each(subject.replace(/(^[^?]*\?)|(#[^#]*$)/g, "").split("&"), function (pair) {
+	parseQuery = function ( subject ) {
+		var object = {},
+			urlDecode = decodeURIComponent;
+		
+		each( subject.replace( /(^[^?]*\?)|(#[^#]*$)/g, "" ).split( "&" ), function ( pair ) {
 			pair = pair.split("=");
-			object[urlDecode(pair[0])] = (pair[1]) ? urlDecode(pair[1]) : null;
+			object[ urlDecode( pair[ 0 ] ) ] = ( pair[ 1 ] ) ? urlDecode( pair[ 1 ] ) : null;
 		});
+		
 		return object;
 	},
 
-	template = function (template, object, delimiters) {
-		var string = template;
-		delimiters = delimiters || ["{", "}"];
-		each(object, function (value, key) {
-			string = string.replace(delimiters[0] + key + delimiters[1], value);
+	template = function ( template, object, delimiters ) {
+		var string = template.slice();
+		
+		delimiters = delimiters || [ "{", "}" ];
+		
+		each( object, function ( value, key ) {
+			string = string.replace( delimiters[ 0 ] + key + delimiters[ 1 ], value );
 		});
+		
 		return string;
 	},
 
 	// DOM
 
-	wrapper = function (element) {
+	wrapper = function ( element ) {
 		this.el = element || null;
+		
 		return this;
 	},
 
-	create = function (tag, options, parent, context) {
-		if (type(options) == "element") {
+	create = function ( tag, options, parent, context ) {
+		var element = document.createElement( tag );
+		
+		if ( type( options ) === "element" ) {
 			context = parent || null;
 			parent = options;
 			options = null;
 		}
-		var element = document.createElement(tag);
-		if (options) {
-			extend(element, options);
+		
+		if ( options ) {
+			extend( element, options );
 		}
-		if (parent) {
-			insertSingle(element, parent, context);
+		
+		if ( parent ) {
+			insertSingle( parent, element, context );
 		}
-		return new wrapper(element);
+		
+		return new wrapper( element );
 	},
 
-	insertSingle = function (element, parent, context) {
-		parent = parent || document.body;
-		if (context === undefined) {
+	insertSingle = function ( parent, element, context ) {
+		
+		if ( context === undefined ) {
 			context = "bottom";
 		}
-		var rel,
-			children;
+		
+		var rel, children;
 
-		switch (context) {
+		switch ( context ) {
 
 			case "top":
 				children = getChildren(parent);
-				rel = (children) ? children[0] : false;
+				rel = ( children ) ? children[ 0 ] : false;
 				break;
 
 			case "bottom":
@@ -187,47 +218,49 @@
 				break;
 
 			case "after":
-				rel = getSiblings("next", parent, null, true);
-				parent = (!rel) ? parent : parent.parentNode;
+				rel = getNext( parent );
+				parent = ( !rel ) ? parent : parent.parentNode;
 				break;
 
 			default:
-				if (type(context) === "number") {
+				if ( type( context ) === "number" ) {
 					children = getChildren(parent);
-					if (context < 0) {
+					if ( context < 0 ) {
 						context += children.length;
 					}
-					if (children.length > context) {
-						rel = children[context+1];
+					if ( children.length > context ) {
+						rel = children[ context + 1 ];
 					}
 				}
 				break;
 
 		}
-		if (rel) {
-			parent.insertBefore(element, rel);
+		if ( rel ) {
+			parent.insertBefore( element, rel );
 		}
 		else {
-			parent.appendChild(element);
+			parent.appendChild( element );
 		}
 	},
 
-	insert = function (contents, context) {
-		var contentType = type(contents),
-			i,
-			content;
-		if (contentType === "string" || contentType === "element") {
-			contents = [contents];
+	insert = function ( parent, contents, context ) {
+		var i, content, length,
+			contentType = type( contents );
+		
+		if ( contentType === "string" || contentType === "element" ) {
+			contents = [ contents ];
 		}
-		for (i = 0; i < contents.length; i++) {
-			content = contents[i];
+		
+		length = contents.length;
+		
+		for ( i = 0; i < length; i++ ) {
+			content = contents[ i ];
 			insertSingle(
-				(content.nodeName) ? content : document.createTextNode(content),
-				this.el,
+				parent,
+				( content.nodeName ) ? content : document.createTextNode( content ),
 				context
 			);
 		}
-		return this;
 	},
 
 	/*
@@ -238,92 +271,89 @@
 
 	*/
 
-	get = function (selector, parent) {
-		if (typeof selector != "string") {
-			return new wrapper(selector);
+	get = function ( selector, parent ) {
+		if ( typeof selector !== "string" ) {
+			return new wrapper( selector );
 		}
 
-		var element = (parent || document).querySelector(selector);
+		var element = ( parent || document ).querySelector( selector );
 
-		return element ? new wrapper(element) : null;
+		return ( element ) ? new wrapper( element ) : element;
 	},
 
-	getAll = function (selector, parent) {
-		var nodelist = (parent || document).querySelectorAll(selector),
-			node, i = nodelist.length, elements = [];
-
-		while (i--) {
-			node = nodelist[i];
-			elements[i] = new wrapper(node);
-		}
-
-		return elements;
-	},
-
-	getChildren = function (selector) {
-		var nodelist = this.el.childNodes,
-			node, elements = [];
-
-		for (var i = 0, l = nodelist.length; i < l; i++) {
-			node = nodelist[i];
-			if (node.nodeType === 1 && match(node, selector)) {
-				elements.push(new wrapper(node));
-			}
-		}
-
-		return elements;
-
-	},
-
-	getSiblings = function (selector) {
-		var node = this.el.parentNode.firstChild,
+	getAll = function ( selector, parent ) {
+		var node,
+			nodelist = ( parent || document ).querySelectorAll( selector ),
+			i = nodelist.length,
 			elements = [];
 
-		while (node) {
-			if (node != parent && node.nodeType === 1 && match(node, selector)) {
-				elements.push(new wrapper(node));
+		while ( i-- ) {
+			elements[ i ] = new wrapper( nodelist[ i ] );
+		}
+
+		return elements;
+	},
+
+	getChildren = function ( element, selector ) {
+		var i, l,
+			children = element.childNodes,
+			length = children.length,
+			elements = [];
+
+		for ( i = 0; i < length; i++ ) {
+			element = children[i];
+			if ( element.nodeType === 1 && match( element, selector ) ) {
+				elements.push( element );
 			}
-			node = node.nextSibling;
 		}
 
 		return elements;
 
 	},
 
-	getNext = function(selector){
-		var node = this.el.nextSibling;
-
-		while (node) {
-			if (node.nodeType === 1) {
-				if (match(node, selector)) {
-					return new wrapper(node);
-				}
-				else {
-					return false;
-				}
-			}
-			node = node.nextSibling;
-		}
-
-		return false;
+	getSiblings = function ( element, selector ) {
+		var elements = getChildren( element.parentNode, selector ),
+			index = elements.indexOf( element );
+		
+		elements.splice( index, 1 );
+			
+		return elements;
 	},
 
-	getPrevious = function(element, selector){
-		var node = this.el.previousSibling;
+	getNext = function( element, selector ) {
+		element = element.nextSibling;
 
-		while (node) {
-			if (node.nodeType === 1) {
-				if (match(node, selector)) {
-					return new wrapper(node);
+		while ( element ) {
+			if ( element.nodeType === 1 ) {
+				if ( match( element, selector ) ) {
+					return element;
 				}
 				else {
-					return false;
+					return null;
 				}
 			}
-			node = node.previousSibling;
+			element = element.nextSibling;
 		}
 
-		return false;
+		return null;
+	},
+
+	getPrevious = function( element, selector ) {
+		element = element.previousSibling;
+
+		while ( element ) {
+			if ( element.nodeType === 1 ) {
+				if ( match( element, selector ) ) {
+					return element;
+				}
+				else {
+					return null;
+				}
+			}
+			element = element.previousSibling;
+		}
+
+		return null;
 	},
 
 	/*
@@ -332,44 +362,54 @@
 
 	*/
 
-	contains = (global.Node && Node.prototype && Node.prototype.compareDocumentPosition) ?
-			function(child){ return !!(this.el.compareDocumentPosition(child) & 16); } :
- 			function(child){ return this.el.contains(child); },
+	contains = ( global.Node && Node.prototype && Node.prototype.compareDocumentPosition ) ?
+			function ( child ) { return !!(this.el.compareDocumentPosition( child.el ) & 16); } :
+ 			function ( child ) { return this.el.contains( child.el ); },
 
 	html = document.documentElement,
 
 	matchesSelector = html.matchesSelector || html.mozMatchesSelector || html.webkitMatchesSelector || html.msMatchesSelector || html.oMatchesSelector,
 
-	match = function (element, selector) {	
-		return matchesSelector.call(element, selector);
+	match = function ( element, selector ) {	
+		return matchesSelector.call( element, selector );
 	},
 
-	addClass = function (className) {
+	addClass = function ( className ) {
 		var element = this.el,
-			classList = element.className.split(/\s+/),
-			index = classList.indexOf(className);
-		if (index == -1) {
-			classList.push(className);
-			element.className = classList.join(" ");
+			classList = element.className.split( /\s+/ ),
+			index = classList.indexOf( className );
+		
+		if ( index === -1 ) {
+			classList.push( className );
+			element.className = classList.join( " " );
 		}
+		
+		return this;
 	},
 
-	removeClass = function (className) {
+	removeClass = function ( className ) {
 		var element = this.el,
-			classList = element.className.split(/\s+/),
-			index = classList.indexOf(className);
-		if (index > -1) {
-			classList.splice(index, 1);
-			element.className = classList.join(" ");
+			classList = element.className.split( /\s+/ ),
+			index = classList.indexOf( className );
+		
+		if ( index > -1 ) {
+			classList.splice( index, 1 );
+			element.className = classList.join( " " );
 		}
+		
+		return this;
 	},
 
-	on = function (event, func) {
-		this.el.addEventListener(event, func, false);
+	on = function ( event, func ) {
+		this.el.addEventListener( event, func, false );
+		
+		return this;
 	},
 
-	off = function (event, func) {
-		this.el.removeEventListener(event, func, false);
+	off = function ( event, func ) {
+		this.el.removeEventListener( event, func, false );
+		
+		return this;
 	},
 	
 	api = {
@@ -627,7 +667,11 @@
 			(end)
 		*/
 
-		insert: insert,
+		insert: function ( contents, context ) {
+			insert( this.el, contents, context );
+			
+			return this;	
+		},
 
 		/*
 		Function: get
@@ -652,8 +696,10 @@
 			(end)
 		*/
 
-		get: function (selector) {
-			return get(selector, this.el);
+		get: function ( selector ) {
+			return get( selector, this.el );
+			
+		},
 
 		/*
 		Function: getAll
@@ -682,84 +728,64 @@
 			//};
 			(end)
 		*/
-		
-		},
 
-		getAll: function (selector) {
-			return getAll(selector, this.el);
+		getAll: function ( selector ) {
+			return getAll( selector, this.el );
 		},
 
 		/*
 		Function: getChildren
-			Returns true or false for whether the supplied selector matches the element.
-
-		Arguments:
-			elements -	(array or element) .
-			selector -	(string) Element to append the supplied content to.
-
-		Example:
-			(start code)
-			(end)
 		*/
 
-		getChildren: getChildren,
+		getChildren: function ( selector ) {
+			var i,
+				elements = getChildren( this.el, selector ),
+				length = elements.length;
+				
+			for ( i = 0; i < length; i++ ) {
+				elements[ i ] = new wrapper( elements [ i ] );
+			}
+			
+			return elements;
+		},
 
 		/*
 		Function: getSiblings
-			Returns true or false for whether the supplied selector matches the element.
-
-		Arguments:
-			elements -	(array or element) .
-			selector -	(string) Element to append the supplied content to.
-
-		Example:
-			(start code)
-			(end)
 		*/
 
-		getSiblings: getSiblings,
+		getSiblings: function ( selector ) {
+			var i,
+				elements = getSiblings( this.el, selector ),
+				length = elements.length;
+				
+			for ( i = 0; i < length; i++ ) {
+				elements[ i ] = new wrapper( elements [ i ] );
+			}
+			
+			return elements;
+		},
 
 		/*
 		Function: getNext
-			Returns true or false for whether the supplied selector matches the element.
-
-		Arguments:
-			elements -	(array or element) .
-			selector -	(string) Element to append the supplied content to.
-
-		Example:
-			(start code)
-			(end)
 		*/
 
-		getNext: getNext,
+		getNext: function ( selector ) {
+			var element = getNext( this.el, selector );
+			
+			return ( element ) ? new wrapper( element ) : element;
+		},
 
 		/*
 		Function: getPrevious
-			Returns true or false for whether the supplied selector matches the element.
-
-		Arguments:
-			elements -	(array or element) .
-			selector -	(string) Element to append the supplied content to.
-
-		Example:
-			(start code)
-			(end)
 		*/
 
-		getPrevious: getPrevious,
+		getPrevious: function ( selector ) {
+			var element = getPrevious( this.el, selector );
+			return ( element ) ? new wrapper( element ) : element;
+		},
 
 		/*
 		Function: contains
-			Returns true or false for whether the supplied selector matches the element.
-
-		Arguments:
-			elements -	(array or element) .
-			selector -	(string) Element to append the supplied content to.
-
-		Example:
-			(start code)
-			(end)
 		*/
 
 		contains: contains,
@@ -777,64 +803,30 @@
 			(end)
 		*/
 
-		match: match,
+		match: function ( selector ) {
+			return match( this.el, selector );
+		},
 
 		/*
 		Function: addClass
-			Returns true or false for whether the supplied selector matches the element.
-
-		Arguments:
-			elements -	(array or element) .
-			selector -	(string) Element to append the supplied content to.
-
-		Example:
-			(start code)
-			(end)
 		*/
 
 		addClass: addClass,
 
 		/*
 		Function: removeClass
-			Returns true or false for whether the supplied selector matches the element.
-
-		Arguments:
-			elements -	(array or element) .
-			selector -	(string) Element to append the supplied content to.
-
-		Example:
-			(start code)
-			(end)
 		*/
 
 		removeClass: removeClass,
 
 		/*
 		Function: on
-			Returns true or false for whether the supplied selector matches the element.
-
-		Arguments:
-			elements -	(array or element) .
-			selector -	(string) Element to append the supplied content to.
-
-		Example:
-			(start code)
-			(end)
 		*/
 
 		on: on,
 
 		/*
 		Function: off
-			Returns true or false for whether the supplied selector matches the element.
-
-		Arguments:
-			elements -	(array or element) .
-			selector -	(string) Element to append the supplied content to.
-
-		Example:
-			(start code)
-			(end)
 		*/
 
 		off: off
@@ -842,4 +834,4 @@
 	};
 
 
-}(this, document));
+} ( this, document ));
