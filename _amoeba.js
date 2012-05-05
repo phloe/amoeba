@@ -1,54 +1,6 @@
 (function ( global, document ) {
 
-	var _amoeba = global._amoeba = function ( callback ) {
-		callback( get, getAll, api );
-	},
-
-	load = function ( url, callback ) {
-		var script = create( "script", document.body ),
-			element = script.el;
-			
-		if ( callback ) {
-			element.onload = callback;
-		}
-		
-		element.src = url;
-		
-		return script;
-	},
-
-	request = function ( url, callback, data, mode, async ) {
-		var xhr = new XMLHttpRequest();
-		
-		mode = mode || "GET";
-		async = ( async === undefined ) ? true : async;
-		
-		if ( data ) {
-			data = toQuery( data );
-			if ( mode === "GET" ) {
-				url += "?" + data;
-				data = null;
-			}
-		}
-		
-		xhr.open( mode, url, async );
-		
-		if ( mode === "POST" ) {
-			xhr.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
-		}
-		
-		if ( callback ) {
-			xhr.onload = function () {
-				callback( xhr.responseText, xhr.responseXML );
-			};
-		}
-		
-		xhr.send( data );
-		
-		return xhr;
-	},
-
-	type = function ( subject ) {
+	var type = function ( subject ) {
 		var type;
 		
 		switch ( subject ) {
@@ -336,61 +288,9 @@
 		return null;
 	},
 
-	/*
-
-		http://www.quirksmode.org/blog/archives/2006/01/contains_for_mo.html
-
-	*/
-
-	contains = ( global.Node && Node.prototype && Node.prototype.compareDocumentPosition ) ?
-			function ( child ) { return !!(this.el.compareDocumentPosition( child.el ) & 16); } :
- 			function ( child ) { return this.el.contains( child.el ); },
-
 	html = document.documentElement,
 
 	matchesSelector = html.matchesSelector || html.mozMatchesSelector || html.webkitMatchesSelector || html.msMatchesSelector || html.oMatchesSelector,
-
-	match = function ( element, selector ) {	
-		return matchesSelector.call( element, selector );
-	},
-
-	addClass = function ( className ) {
-		var element = this.el,
-			classList = element.className.split( /\s+/ ),
-			index = classList.indexOf( className );
-		
-		if ( index === -1 ) {
-			classList.push( className );
-			element.className = classList.join( " " );
-		}
-		
-		return this;
-	},
-
-	removeClass = function ( className ) {
-		var element = this.el,
-			classList = element.className.split( /\s+/ ),
-			index = classList.indexOf( className );
-		
-		if ( index > -1 ) {
-			classList.splice( index, 1 );
-			element.className = classList.join( " " );
-		}
-		
-		return this;
-	},
-
-	on = function ( event, func ) {
-		this.el.addEventListener( event, func, false );
-		
-		return this;
-	},
-
-	off = function ( event, func ) {
-		this.el.removeEventListener( event, func, false );
-		
-		return this;
-	},
 	
 	api = {
 	
@@ -415,7 +315,18 @@
 			(end)
 		*/
 		
-		load: load,
+		load: function ( url, callback ) {
+			var script = create( "script", document.body ),
+				element = script.el;
+				
+			if ( callback ) {
+				element.onload = callback;
+			}
+			
+			element.src = url;
+			
+			return script;
+		},
 
 		/*
 		Function: request
@@ -437,7 +348,36 @@
 			(end)
 		*/
 		
-		request: request,
+		request: function ( url, callback, data, mode, async ) {
+			var xhr = new XMLHttpRequest();
+			
+			mode = mode || "GET";
+			async = ( async === undefined ) ? true : async;
+			
+			if ( data ) {
+				data = toQuery( data );
+				if ( mode === "GET" ) {
+					url += "?" + data;
+					data = null;
+				}
+			}
+			
+			xhr.open( mode, url, async );
+			
+			if ( mode === "POST" ) {
+				xhr.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
+			}
+			
+			if ( callback ) {
+				xhr.onload = function () {
+					callback( xhr.responseText, xhr.responseXML );
+				};
+			}
+			
+			xhr.send( data );
+			
+			return xhr;
+		},
 
 		/*
 		Function: type
@@ -783,8 +723,16 @@
 		/*
 		Function: contains
 		*/
-
-		contains: contains,
+	
+		/*
+	
+			http://www.quirksmode.org/blog/archives/2006/01/contains_for_mo.html
+	
+		*/
+	
+		contains = ( global.Node && Node.prototype && Node.prototype.compareDocumentPosition ) ?
+				function ( child ) { return !!(this.el.compareDocumentPosition( child.el ) & 16); } :
+	 			function ( child ) { return this.el.contains( child.el ); },
 
 		/*
 		Function: match
@@ -800,34 +748,67 @@
 		*/
 
 		match: function ( selector ) {
-			return match( this.el, selector );
+			return matchesSelector.call( this.el, selector );
 		},
 
 		/*
 		Function: addClass
 		*/
 
-		addClass: addClass,
+		addClass: function ( className ) {
+			var element = this.el,
+				classList = element.className.split( /\s+/ ),
+				index = classList.indexOf( className );
+			
+			if ( index === -1 ) {
+				classList.push( className );
+				element.className = classList.join( " " );
+			}
+			
+			return this;
+		},
 
 		/*
 		Function: removeClass
 		*/
 
-		removeClass: removeClass,
+		removeClass: function ( className ) {
+			var element = this.el,
+				classList = element.className.split( /\s+/ ),
+				index = classList.indexOf( className );
+			
+			if ( index > -1 ) {
+				classList.splice( index, 1 );
+				element.className = classList.join( " " );
+			}
+			
+			return this;
+		},
 
 		/*
 		Function: on
 		*/
 
-		on: on,
+		on: function ( event, func ) {
+			this.el.addEventListener( event, func, false );
+			
+			return this;
+		},
 
 		/*
 		Function: off
 		*/
 
-		off: off
+		off: function ( event, func ) {
+			this.el.removeEventListener( event, func, false );
+			
+			return this;
+		}
 
 	};
 
+	global._amoeba = function ( callback ) {
+		callback( get, getAll, api );
+	};
 
 } ( this, document ));
