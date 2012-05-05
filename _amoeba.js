@@ -730,7 +730,7 @@
 	
 		*/
 	
-		contains = ( global.Node && Node.prototype && Node.prototype.compareDocumentPosition ) ?
+		contains: ( global.Node && Node.prototype && Node.prototype.compareDocumentPosition ) ?
 				function ( child ) { return !!(this.el.compareDocumentPosition( child.el ) & 16); } :
 	 			function ( child ) { return this.el.contains( child.el ); },
 
