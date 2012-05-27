@@ -1,30 +1,21 @@
-/**
-@overview This file contains the _amoeba micro API.
-@author Rasmus Fløe
+/*
+
+***_amoeba***
+
+Exposes the internal `get` and `getAll` functions and the internal `util` namespace.
+As these are passed into the callback function as arguments you can name them however you like - eg. `$`, `$$`, `_`
+
+	_amoeba(function(get, getAll, util){
+		var page = get("#page");
+		if (page.match(".active")) {
+			page.getAll("div");
+		}
+	});
+
 */
 
-/**
-Exposes the internal "get" and "getAll" functions and the internal "util" namespace.
-As these are passed into the callback function as arguments you can name them however you like - eg. $, $$, _
-@global
-@name _amoeba
-@function
-@argument {Function} callback
-@example
-_amoeba(function(get, getAll, util){
-	var page = get("#page");
-	if (page.match(".active")) {
-		page.getAll("div");
-	}
-});
-*/
 var _amoeba = (function (global, document) {
 	"use strict";
-
-/**
-@private
-@function
-*/
 
 	var type = function (subject) {
 		var type;
@@ -50,11 +41,6 @@ var _amoeba = (function (global, document) {
 		
 		return type;
 	},
-
-/**
-@private
-@function
-*/
 
 	each = function (subject, func, bind) {
 		var key, i, length, _type = type(subject);
@@ -87,11 +73,6 @@ var _amoeba = (function (global, document) {
 	},
 
 // Object
-
-/**
-@private
-@function
-*/
 	
 	extend = function (subject, properties) {
 		each(properties, function (value, key) {
@@ -110,11 +91,6 @@ var _amoeba = (function (global, document) {
 		return subject;
 	},
 
-/**
-@private
-@function
-*/
-
 	toQuery = function (subject) {
 		var string = [],
 			urlEncode = encodeURIComponent;
@@ -130,11 +106,6 @@ var _amoeba = (function (global, document) {
 
 // String
 
-/**
-@private
-@function
-*/
-
 	parseQuery = function (subject) {
 		var object = {},
 			urlDecode = decodeURIComponent;
@@ -146,11 +117,6 @@ var _amoeba = (function (global, document) {
 		
 		return object;
 	},
-
-/**
-@private
-@function
-*/
 
 	template = function (template, object, delimiters) {
 		var string = template.slice();
@@ -165,25 +131,12 @@ var _amoeba = (function (global, document) {
 	},
 
 // DOM
-	
-/**
-Provides a number of useful methods by wrapping the supplied element.
-@name Wrapper
-@constructor
-@property {Element} el A reference to the wrapped element.
-@argument {Element} element The element that is going to be wrapped
-*/
-	
+
 	Wrapper = function (element) {
 		this.el = element || null;
 		
 		return this;
 	},
-
-/**
-@private
-@function
-*/
 
 	create = function (tag, options, parent, context) {
 		var element = document.createElement(tag);
@@ -204,11 +157,6 @@ Provides a number of useful methods by wrapping the supplied element.
 		
 		return new Wrapper(element);
 	},
-
-/**
-@private
-@function
-*/
 
 	insert = function (parent, element, context) {
 		
@@ -259,19 +207,13 @@ Provides a number of useful methods by wrapping the supplied element.
 		}
 	},
 
-	/*
+	//remove: function () {},
 
-	remove: function () {},
+	//erase: function () {},
 
-	erase: function () {},
-
-	*/
-
-/**
-@name get
-@description Returns a wrapped element matching the supplied selector.
-@inner
-@function
+/*
+get
+Returns a wrapped element matching the supplied selector.
 @argument {String} selector The CSS selector matching the element you want
 @argument {Element} parent Optional
 @returns {Wrapper} An instance of Wrapper.
@@ -287,11 +229,9 @@ Provides a number of useful methods by wrapping the supplied element.
 		return (element) ? new Wrapper(element) : element;
 	},
 	
-/**
-@name getAll
-@description Returns an array of elements that match the supplied selector.
-@inner
-@function
+/*
+getAll
+Returns an array of elements that match the supplied selector.
 @argument {String} selector The CSS selector matching the elements you want
 @argument {Element} parent Optional
 @returns {Array} An array containing elements.
@@ -303,16 +243,11 @@ Provides a number of useful methods by wrapping the supplied element.
 			elements = [];
 
 		while (i--) {
-			elements[i] = nodelist[i];
+			elements[i] = new Wrapper(nodelist[i]);
 		}
 
 		return elements;
 	},
-	
-/**
-@private
-@function
-*/
 
 	getChildren = function (element, selector) {
 		var i, l,
@@ -331,11 +266,6 @@ Provides a number of useful methods by wrapping the supplied element.
 
 	},
 
-/**
-@private
-@function
-*/
-
 	getSiblings = function (element, selector) {
 		var elements = getChildren(element.parentNode, selector),
 			index = elements.indexOf(element);
@@ -344,11 +274,6 @@ Provides a number of useful methods by wrapping the supplied element.
 			
 		return elements;
 	},
-
-/**
-@private
-@function
-*/
 
 	getNext = function(element, selector) {
 		element = element.nextSibling;
@@ -367,11 +292,6 @@ Provides a number of useful methods by wrapping the supplied element.
 
 		return null;
 	},
-
-/**
-@private
-@function
-*/
 
 	getPrevious = function(element, selector) {
 		element = element.previousSibling;
@@ -394,35 +314,31 @@ Provides a number of useful methods by wrapping the supplied element.
 	html = document.documentElement,
 
 	matchesSelector = html.matchesSelector || html.mozMatchesSelector || html.webkitMatchesSelector || html.msMatchesSelector || html.oMatchesSelector,
-
-/**
-@private
-@function
-*/
 	
 	match = function (element, selector) {
 		return matchesSelector.call(element, selector);
 	},
 	
-/**
-@namespace util
-@inner
-@description Holds the methods for the main API
+/*
+util
+Holds the methods for the main API
 */
 	
 	util = {
 	
-/**
-@method util.load
-@description Loads a script onto the page and optionally executes a callback function on load.
-@function
-@argument {String} url The url of the script to be loaded
-@argument {Function} func Optional. A function that is called when the script has loaded
+/*
+Method
+util.load
+Loads a script onto the page and optionally executes a callback function on load.
+Arguments
+* `url` (String) The url of the script to be loaded
+* `func` (Function) Optional. A function that is called when the script has loaded
 @returns {Element} A script element.
-@example
-util.load("http://amoeba-js.net/js", function(){
-	alert("script loaded");
-});
+
+	util.load("http://amoeba-js.net/js", function(){
+		alert("script loaded");
+	});
+	
 */
 		
 		load: function (url, callback) {
@@ -437,10 +353,10 @@ util.load("http://amoeba-js.net/js", function(){
 			return script;
 		},
 
-/**
-@name util.request
-@description Creates and sends an XMLHttpRequest.
-@function
+/*
+util.request
+Creates and sends an XMLHttpRequest.
+Arguments:
 @argument {String} url The url of the script to be loaded
 @argument {Function} func A function that is called with the XMLHttpRequest object as an argument when the script has loaded
 @argument {Object} data Optional. An object containing the key-value pairs sent with the request
@@ -448,8 +364,9 @@ util.load("http://amoeba-js.net/js", function(){
 @argument {Boolean} async Optional. A boolean to set asynchronous mode on or off. Default is true
 @argument {Object} headers Optional. An Object containing additional headers. 
 @returns {XMLHttpRequest} An XMLHttpRequest object.
-@example
-util.request("");
+
+	util.request("");
+	
 */
 		
 		request: function (url, callback, data, mode, async, headers) {
@@ -487,146 +404,144 @@ util.request("");
 			return xhr;
 		},
 
-/**
-@name util.type
-@description Identifies the type of the supplied variable.
-@function
+/*
+util.type
+Identifies the type of the supplied variable.
 @argument {mixed} subject The variable whose type is to be identified
 @returns {String} A string: "boolean", "number", "string", "array", "object", "function", "regexp", "date", "math", "location", "element", "nodelist", "htmlcollection" or "undefined".
-@example
-var myVariable = ["hello", "world"];
-var myType = util.type(myVariable);
-//myType == "array"
 
-Credits:
-	Kangax
+	var myVariable = ["hello", "world"];
+	var myType = util.type(myVariable);
+	//myType == "array"
+
+Credits: Kangax
 
 */
 		
 		type: type,
 
-/**
-@name util.each
-@description Iterates through the supplied subject and calls the callback function on each step.
-@function
+/*
+util.each
+Iterates through the supplied subject and calls the callback function on each step.
 @argument {Number|String|Array|Object|HtmlCollection} subject Variable to iterate through. If a number is supplied the callback function is called that number of times
 @argument {Function} func Callback function to call every iteration step
 @argument {Object} bind Optional. Variable to bind the this keyword to inside the callback function
-@example
-var recipients = ["world", "steve", "dave"];
-util.each(recipients, function (recipient, i) {
-	alert("Hello, " + recipient + ". You are number " + (i + 1));
-});
-// alerts:
-// "Hello, world. You are number 1"
-// "Hello, steve. You are number 2"
-// "Hello, dave. You are number 3"
+
+	var recipients = ["world", "steve", "dave"];
+	util.each(recipients, function (recipient, i) {
+		alert("Hello, " + recipient + ". You are number " + (i + 1));
+	});
+	// alerts:
+	// "Hello, world. You are number 1"
+	// "Hello, steve. You are number 2"
+	// "Hello, dave. You are number 3"
+	
 */
 		
 		each: each,
 
 
-/**
-@name util.extend
-@description Extends (or overwrite) a given object with the properties of the supplied object properties recursively.
-@function
+/*
+util.extend
+Extends (or overwrite) a given object with the properties of the supplied object properties recursively.
 @argument {Object} subject Object to extend
 @argument {Object} properties Object containing properties to extend with
-@example
-var myObject = {
-	message: "hello",
-	recipient: "steve"
-};
-util.extend(myObject, {recipient: "world"});
-// myObject = {
-//	message: "hello",
-//	recipient: "world"
-//};
+
+	var myObject = {
+		message: "hello",
+		recipient: "steve"
+	};
+	util.extend(myObject, {recipient: "world"});
+	// myObject = {
+	//	message: "hello",
+	//	recipient: "world"
+	//};
+	
 */
 		
 		extend: extend,
 
-/**
-@name util.toQuery
-@description Returns a querystring built from the supplied object.
-@function
+/*
+util.toQuery
+Returns a querystring built from the supplied object.
 @argument {Object} subject Object to transform into a querystring
-@example
-var myObject = {
-	message: "hello",
-	recipient: "world"
-};
-var myQueryString = util.toQuery(myObject);
-// myQueryString = "message=hello&recipient=world";
+
+	var myObject = {
+		message: "hello",
+		recipient: "world"
+	};
+	var myQueryString = util.toQuery(myObject);
+	// myQueryString = "message=hello&recipient=world";
+	
 */
 		
 		toQuery: toQuery,
 
-/**
-@name util.parseQuery
-@description Returns an object containing the querystring data contained in the supplied string.
-@function
+/*
+util.parseQuery
+Returns an object containing the querystring data contained in the supplied string.
 @argument {String} string The string to be transformed
-@example
-// window.location.href =
-// "http://www.mydomain.com/index.php?message=hello&recipient=world";
-var myObject = util.parseQuery(window.location.href);
-//myObject = {
-//	message: "hello",
-//	recipient: "world"
-//};
+
+	// window.location.href =
+	// "http://www.mydomain.com/index.php?message=hello&recipient=world";
+	var myObject = util.parseQuery(window.location.href);
+	//myObject = {
+	//	message: "hello",
+	//	recipient: "world"
+	//};
+	
 */
 
 		
 		parseQuery: parseQuery,
 
-/**
-@name util.template
-@description Returns a template string populated with the data of the supplied object.
-@function
+/*
+util.template
+Returns a template string populated with the data of the supplied object.
 @argument {String} template A string with tokens
 @argument {Object} object An object containing the data needed for populating the template
 @argument {Array} delimiters Optional. An array containing 2 strings that define how tokens are marked up within the supplied template. Defaults are curly braces; { and }
-@example
-var myTemplate = "{message}, {recipient}!";
-var myObject = {
-	message: "hello",
-	recipient: "world"
-};
-var myMessage = util.template(myTemplate, myObject);
-// myMessage = "hello, world!";
+
+	var myTemplate = "{message}, {recipient}!";
+	var myObject = {
+		message: "hello",
+		recipient: "world"
+	};
+	var myMessage = util.template(myTemplate, myObject);
+	// myMessage = "hello, world!";
+	
 */
 		
 		template: template,
 
-/**
-@name util.create
-@description Returns a newly created DOM element with the supplied properties from the options object. The created element is appended to the parent element if supplied. If a context is
+/*
+util.create
+Returns a newly created DOM element with the supplied properties from the options object. The created element is appended to the parent element if supplied. If a context is
 The options argument can be omited in favor of the parent argument.
-@function
 @argument {String} tag Name of the element
 @argument {Object} options Optional. An object containing properties for the element
 @argument {Element} parent Optional. An element to which the created element should be appended
 @argument {String} context Optional. A string that specifies the relation to the parent element; "top" - insert as the first element inside parent. "bottom" - insert as the last element inside parent. "before" - insert before parent (outside). "after" - insert after parent (outside). Default is "bottom"
 @returns {Wrapper} A wrapped element. 
-@example:
-var myElement = util.create(
-	"button",
-	{
-		style: {
-			backgroundColor: "red",
-			borderColor:	"green",
-			color:			"green"
+
+	var myElement = util.create(
+		"button",
+		{
+			style: {
+				backgroundColor: "red",
+				borderColor:	"green",
+				color:			"green"
+			},
+			innerHTML: "click",
+			onclick: function(){
+				alert("hello, world!");
+			}
 		},
-		innerHTML: "click",
-		onclick: function(){
-			alert("hello, world!");
-		}
-	},
-	document.body,
-	"top"
-);
-//	myElement = <button style="background-color: red; border-color: green; color: green;" onclick="alert(\"hello, world!\");">click</button>
+		document.body,
+		"top"
+	);
+	//	myElement = <button style="background-color: red; border-color: green; color: green;" onclick="alert(\"hello, world!\");">click</button>
+	
 */
 		
 		create: create
@@ -651,10 +566,9 @@ var myElement = util.create(
 
 	Wrapper.prototype = {
 
-/**
-@method Wrapper.insert
-@description Inserts the supplied content into the parent element.
-@function
+/*
+Wrapper.insert
+Inserts the supplied content into the parent element.
 @argument {String|Number|Element|Array|HtmlCollection} content Content to be appended. If an array is supplied it should only consist of strings (text or html), numbers or elements
 @argument {Element} parent Element to append the supplied content to
 @argument {String|Number} context Optional. A string or number that specifies the relation to the parent element; "top" - insert as the first elements inside parent. "bottom" - insert as the last elements inside parent. "before" - insert before parent (outside). "after" - insert after parent (outside). If the supplied context is a number it corresponds to the index of the childnodes where content will be inserted. Negative numbers have their index calculated in reverse. Default is "bottom"
@@ -682,46 +596,46 @@ var myElement = util.create(
 			return this;
 		},
 
-/**
-@method Wrapper.get
-@description Finds the first element that matches the provided selector.
-@function
+/*
+Wrapper.get
+Finds the first element that matches the provided selector.
 @argument {String} selector The CSS selector matching the element to be returned. Supported selectors are: type, id, class, child (requires whitespace) and attribute (CSS2: attribute presence and value, CSS3: substring matches) selectors. Multiple class and attribute selectors are supported. Each described node in the selector should have the following required order: type, id, class, attribute, eg. tag#id.class[attribute=value]
 @returns {Element|Null} An element or null if no matching element is found.
-@example
-var body = get("body");
-var firstUserItem = body.get("ul.users li");
-var checkedRadio = body.get("input[name='optIn'][type='radio'][checked]");
+
+	var body = get("body");
+	var firstUserItem = body.get("ul.users li");
+	var checkedRadio = body.get("input[name='optIn'][type='radio'][checked]");
+	
 */
 
 		get: function (selector) {
 			return get(selector, this.el);
 		},
 
-/**
-@method Wrapper.getAll
-@description Returns an array containing all elements that match the supplied selector. If a parent argument is supplied only elements within that parent element is returned.
-@function
+/*
+Wrapper.getAll
+Returns an array containing all elements that match the supplied selector. If a parent argument is supplied only elements within that parent element is returned.
 @argument {String} selector See {@link Wapper.get}
 @returns {Array}
-@example
-var body = get("body");
-var userItems = body.getAll("ul.users li");
+
+	var body = get("body");
+	var userItems = body.getAll("ul.users li");
+	
 */
 
 		getAll: function (selector) {
 			return getAll(selector, this.el);
 		},
 
-/**
-@method Wrapper.children
-@description Returns an array of wrapped child elements. If the selector argument is supplied only the elements matching it will be returned.
-@function
+/*
+Wrapper.children
+Returns an array of wrapped child elements. If the selector argument is supplied only the elements matching it will be returned.
 @argument {String} selector See Wapper.get
 @returns {Array}
-@example
-var ul = get("ul");
-var activeUserItems = ul.children(".active");
+
+	var ul = get("ul");
+	var activeUserItems = ul.children(".active");
+
 */
 
 		children: function (selector) {
@@ -736,15 +650,15 @@ var activeUserItems = ul.children(".active");
 			return elements;
 		},
 
-/**
-@method Wrapper.siblings
-@description Returns an array of wrapped sibling elements. If the selector argument is supplied only the elements matching it will be returned.
-@function
+/*
+Wrapper.siblings
+Returns an array of wrapped sibling elements. If the selector argument is supplied only the elements matching it will be returned.
 @argument {String} selector See Wapper.get
 @returns {Array}
-@example
-var firstDiv = get("body div");
-var otherDivs = firstDiv.siblings("div");
+
+	var firstDiv = get("body div");
+	var otherDivs = firstDiv.siblings("div");
+	
 */
 
 		siblings: function (selector) {
@@ -759,15 +673,15 @@ var otherDivs = firstDiv.siblings("div");
 			return elements;
 		},
 
-/**
-@method Wrapper.next
-@description Returns the next sibling element. If the selector argument is supplied the first matching sibling element proceeding it will be returned.
-@function
+/*
+Wrapper.next
+Returns the next sibling element. If the selector argument is supplied the first matching sibling element proceeding it will be returned.
 @argument {String} selector See Wapper.get
 @returns {Wrapper|Null}
-@example
-var firstDiv = get("body div");
-var nextDiv = firstDiv.next("div");
+
+	var firstDiv = get("body div");
+	var nextDiv = firstDiv.next("div");
+	
 */
 
 		next: function (selector) {
@@ -776,15 +690,15 @@ var nextDiv = firstDiv.next("div");
 			return (element) ? new Wrapper(element) : element;
 		},
 
-/**
-@method Wrapper.prev
-@description Returns the previous sibling element. If the selector argument is supplied the first matching sibling element preceeding it will be returned.
-@function
+/*
+Wrapper.prev
+Returns the previous sibling element. If the selector argument is supplied the first matching sibling element preceeding it will be returned.
 @argument {String} selector See Wapper.get
 @returns {Wrapper|Null}
-@example
-var lastDiv = getAll("body div")[0];
-var prevDiv = lastDiv.prev("div");
+
+	var lastDiv = getAll("body div")[0];
+	var prevDiv = lastDiv.prev("div");
+	
 */
 
 		prev: function (selector) {
@@ -792,18 +706,18 @@ var prevDiv = lastDiv.prev("div");
 			return (element) ? new Wrapper(element) : element;
 		},
 
-/**
-@method Wrapper.contains
-@description Returns true if the supplied child is a descendant of the wrapped element.
-@function
+/*
+Wrapper.contains
+Returns true if the supplied child is a descendant of the wrapped element.
 @argument {Element} child The element to test against
 @returns {Wrapper|Null}
-@example
-var body = get("body");
-var div = get("div");
-if (body.contains(div)) {
-	// do stuff
-}
+
+	var body = get("body");
+	var div = get("div");
+	if (body.contains(div)) {
+		// do stuff
+	}
+	
 */
 
 /*
@@ -820,28 +734,28 @@ if (body.contains(div)) {
 				return this.el.contains(child.el);
 			},
 
-/**
-@method Wrapper.match
-@description Returns true or false for whether the supplied selector matches the element.
-@function
+/*
+Wrapper.match
+Returns true or false for whether the supplied selector matches the element.
 @argument {String} selector Selector to match against wrapped element
 @returns {Boolean}
-@example
-get("div.class").match(".class");
+
+	get("div.class").match(".class");
+
 */
 
 		match: function (selector) {
 			return matchesSelector.call(this.el, selector);
 		},
 
-/**
-@method Wrapper.addClass
-@description Adds the supplied classname if it doesn't exist on the wrapped element.
-@function
+/*
+Wrapper.addClass
+Adds the supplied classname if it doesn't exist on the wrapped element.
 @argument {String} className The classname to add
 @returns The wrapped element.
-@example
-get("div.user").addClass("active");
+
+	get("div.user").addClass("active");
+
 */
 
 		addClass: function (className) {
@@ -857,14 +771,14 @@ get("div.user").addClass("active");
 			return this;
 		},
 
-/**
-@method Wrapper.removeClass
-@description Removes the supplied classname if it exists on the wrapped element.
-@function
+/*
+Wrapper.removeClass
+Removes the supplied classname if it exists on the wrapped element.
 @argument {String} className The classname to remove
 @returns The wrapped element.
-@example
-get("div.active").removeClass("active");
+
+	get("div.active").removeClass("active");
+	
 */
 
 		removeClass: function (className) {
@@ -880,17 +794,17 @@ get("div.active").removeClass("active");
 			return this;
 		},
 
-/**
-@method Wrapper.on
-@description Add an event to the wrapped element.
-@function
+/*
+Wrapper.on
+Add an event to the wrapped element.
 @argument {String} event The type of event to add
 @argument {Function} func The function to call on the event
 @returns The wrapped element.
-@example
-get("button").on("click", function(){
-	// do stuff
-});
+
+	get("button").on("click", function(){
+		// do stuff
+	});
+	
 */
 
 		on: function (event, func, selector) {
@@ -909,18 +823,18 @@ get("button").on("click", function(){
 			return this;
 		},
 
-/**
-@method Wrapper.off
-@description Remove an event from the wrapped element.
-@function
+/*
+Wrapper.off
+Remove an event from the wrapped element.
 @argument {String} event The type of event to remove
 @argument {Function} func The function to remove
 @returns The wrapped element
-@example
-var handleClick = function(){
-	// do stuff
-};
-get("button").off("click", handleClick);
+
+	var handleClick = function(){
+		// do stuff
+	};
+	get("button").off("click", handleClick);
+	
 */
 
 		off: function (event, func) {
