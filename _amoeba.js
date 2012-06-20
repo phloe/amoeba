@@ -389,7 +389,7 @@ Arguments:
 			
 			xhr.open(mode, url, async);
 			
-			_.each(headers, function (value, key) {
+			each(headers, function (value, key) {
 				xhr.setRequestHeader(key, value);
 			});
 			
