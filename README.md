@@ -1,4 +1,4 @@
-# Amoeba micro API
+![Amoeba micro API](http://amoeba-js.net/img/logotype.png)
 
 Micro API designed for use in bootstrap bookmarklets.
 
@@ -16,8 +16,8 @@ It's used in the bookmarklet builder on [amoeba-js.net](http://amoeba-js.net/).
 
 ## _amoeba
 
-Exposes the internal `$` (get) and `$$` (getAll) functions and the internal `_` (util) namespace.
-As these are passed into the callback function as arguments (however - you can name them however you like).
+Exposes the internal `$` (get) and `$$` (getAll) functions and `_` (util) namespace.
+References are passed into the callback function as arguments (so you could call them whatever you like).
 
 	_amoeba(function($, $$, _){
 		var page = $("#page");
