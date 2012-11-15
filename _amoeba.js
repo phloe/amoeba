@@ -1,4 +1,4 @@
-var _amoeba = (function (global, document) {
+this._amoeba = this._amoeba || (function (global, document) {
 	"use strict";
 
 	var type = function (subject) {
@@ -103,7 +103,7 @@ var _amoeba = (function (global, document) {
 	},
 
 	template = function (template, object, delimiters) {
-		var string = template.slice();
+		var string = template + "";
 		
 		delimiters = delimiters || ["{", "}"];
 		
@@ -226,7 +226,7 @@ var _amoeba = (function (global, document) {
 
 		for (i = 0; i < length; i++) {
 			element = children[i];
-			if (element.nodeType === 1 && match(element, selector)) {
+			if (element.nodeType === 1 && (!selector || match(element, selector))) {
 				elements.push(element);
 			}
 		}
@@ -249,11 +249,8 @@ var _amoeba = (function (global, document) {
 
 		while (element) {
 			if (element.nodeType === 1) {
-				if (match(element, selector)) {
+				if (!selector || match(element, selector)) {
 					return element;
-				}
-				else {
-					return null;
 				}
 			}
 			element = element.nextSibling;
@@ -267,11 +264,8 @@ var _amoeba = (function (global, document) {
 
 		while (element) {
 			if (element.nodeType === 1) {
-				if (match(element, selector)) {
+				if (!selector || match(element, selector)) {
 					return element;
-				}
-				else {
-					return null;
 				}
 			}
 			element = element.previousSibling;
@@ -317,7 +311,7 @@ var _amoeba = (function (global, document) {
 					url += "?" + data;
 					data = null;
 				}
-				else {
+				else (!("Content-type" in headers)) {
 					headers["Content-type"] = "application/x-www-form-urlencoded";
 				}
 			}
@@ -482,9 +476,14 @@ var _amoeba = (function (global, document) {
 			return this;
 		},
 
-		on: function (event, func, selector) {
-			if (selector) {
-				var _func = func;
+		on: function (event, func) {
+			if (~event.indexOf(" ")) {
+				var _func = func,
+					split = event.split(" "),
+					selector = split[1];
+				
+				event = split[0];
+				
 				func = function (e) {
 					var target = e.target;
 					if (match(target, selector)) {

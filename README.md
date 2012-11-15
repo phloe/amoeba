@@ -29,16 +29,16 @@ References are passed into the callback function as arguments (so you could call
 
 ## $ (get)
 
-Returns a wrapped element matching the supplied selector.
+Finds an element matching the supplied selector or wraps an existing element.
 
 ###### Arguments
 
-* `selector` (String) The CSS selector matching the element you want.
-* `parent` (Element) Optional.
+* `selector` (String or Element) The CSS selector matching the element you want. Or an existing element.
+* `parent` (Element) Optional. If supplied 
 
 ###### Returns
 
-(Wrapper) An instance of Wrapper.
+(Wrapper or null) An instance of Wrapper or null.
 
 
 ## $$ (getAll)
@@ -99,7 +99,17 @@ Creates and sends an XMLHttpRequest.
 
 ###### Example
 
-	_.request("");
+	_.request(
+		"/api/data.json",
+		function (data) {
+			data = JSON.parse(data);
+			console.log(data);
+		},
+		{
+			id: "0123456789"
+		},
+		"GET"
+	);
 
 
 ### type
@@ -129,7 +139,7 @@ Iterates through the supplied subject and calls the callback function on each st
 
 ###### Arguments
 
-* `subject` (Number|String|Array|Object|HtmlCollection) Variable to iterate through. If a number is supplied the callback function is called that number of times.
+* `subject` (Number, String, Array, Object or HtmlCollection) Variable to iterate through. If a number is supplied the callback function is called that number of times.
 * `func` (Function) Callback function to call every iteration step.
 * `bind` (Object) Optional. Variable to bind the this keyword to inside the callback function.
 
@@ -274,9 +284,9 @@ Inserts the supplied content into the parent element.
 
 ###### Arguments
 
-* `content` (String|Number|Element|Array|HtmlCollection) Content to be appended. If an array is supplied it should only consist of strings (text or html), numbers or elements.
+* `content` (String, Number, Element, Array or HtmlCollection) Content to be appended. If an array is supplied it should only consist of strings (text or html), numbers or elements.
 * `parent` (Element) Element to append the supplied content to.
-* `context` (String|Number) Optional. A string or number that specifies the relation to the parent element; "top" - insert as the first elements inside parent. "bottom" - insert as the last elements inside parent. "before" - insert before parent (outside). "after" - insert after parent (outside). If the supplied context is a number it corresponds to the index of the childnodes where content will be inserted. Negative numbers have their index calculated in reverse. Default is "bottom".
+* `context` (String or Number) Optional. A string or number that specifies the relation to the parent element; "top" - insert as the first elements inside parent. "bottom" - insert as the last elements inside parent. "before" - insert before parent (outside). "after" - insert after parent (outside). If the supplied context is a number it corresponds to the index of the childnodes where content will be inserted. Negative numbers have their index calculated in reverse. Default is "bottom".
 
 
 
@@ -286,7 +296,7 @@ Finds the first element that matches the provided selector.
 
 ###### Arguments
 
-* `selector` (String) The CSS selector matching the element to be returned. Supported selectors are: type, id, class, child (requires whitespace) and attribute (CSS2: attribute presence and value, CSS3: substring matches) selectors. Multiple class and attribute selectors are supported. Each described node in the selector should have the following required order: type, id, class, attribute, eg. tag#id.class[attribute=value].
+* `selector` (String) The CSS selector matching the element to be returned.
 
 ###### Returns
 
