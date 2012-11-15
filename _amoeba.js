@@ -311,7 +311,7 @@ this._amoeba = this._amoeba || (function (global, document) {
 					url += "?" + data;
 					data = null;
 				}
-				else (!("Content-type" in headers)) {
+				else if (!("Content-type" in headers)) {
 					headers["Content-type"] = "application/x-www-form-urlencoded";
 				}
 			}
