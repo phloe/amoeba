@@ -334,14 +334,13 @@ this._amoeba = this._amoeba || (function (global, document) {
 	},
 	
 	wrapAll = function (elements) {
-		var i = elements.length,
-			_elements = [];
+		var i = elements.length;
 
 		while (i--) {
-			_elements[i] = new Wrapper(elements[i]);
+			elements[i] = new Wrapper(elements[i]);
 		}
 		
-		return _elements;
+		return elements;
 	},
 	
 	getWrapped = function (selector, parent) {
