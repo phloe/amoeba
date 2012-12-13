@@ -357,22 +357,6 @@ this._amoeba = this._amoeba || (function (global, document) {
 		
 		return this;
 	};
-	
-	/*
-	ListWrapper = function (elements) {
-		this.els = elements || [];
-		return this;
-	}
-	
-	util.each(Wrapper.protoype, function (method, name, index) {
-		ListWrapper.prototype[name] = function () {
-			var length = this.els;
-			for (var i = 0; i < length; i++) {
-				
-			}
-		};
-	});
-	*/
 
 	Wrapper.prototype = {
 
