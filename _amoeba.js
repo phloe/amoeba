@@ -76,12 +76,11 @@ this._amoeba = this._amoeba || (function (global, document) {
 	},
 
 	toQuery = function (subject) {
-		var string = [],
-			urlEncode = encodeURIComponent;
+		var string = [];
 		
 		each(subject, function (value, key) {
 			string.push(
-				urlEncode(key) + "=" + urlEncode(value)
+				encodeURIComponent(key) + "=" + encodeURIComponent(value)
 			);
 		});
 		
@@ -91,12 +90,11 @@ this._amoeba = this._amoeba || (function (global, document) {
 // String
 
 	parseQuery = function (subject) {
-		var object = {},
-			urlDecode = decodeURIComponent;
+		var object = {};
 		
 		each(subject.replace(/(^[^?]*\?)|(#[^#]*$)/g, "").split("&"), function (pair) {
 			pair = pair.split("=");
-			object[urlDecode(pair[0])] = (pair[1]) ? urlDecode(pair[1]) : null;
+			object[decodeURIComponent(pair[0])] = (pair[1]) ? decodeURIComponent(pair[1]) : null;
 		});
 		
 		return object;
@@ -116,12 +114,6 @@ this._amoeba = this._amoeba || (function (global, document) {
 
 // DOM
 
-	Wrapper = function (element) {
-		this.el = element || null;
-		
-		return this;
-	},
-
 	create = function (tag, options, parent, context) {
 		var element = document.createElement(tag);
 		
@@ -139,10 +131,14 @@ this._amoeba = this._amoeba || (function (global, document) {
 			insert(parent, element, context);
 		}
 		
-		return new Wrapper(element);
+		return element;
 	},
 
 	insert = function (parent, element, context) {
+		
+		if (type(element) === "string") {
+			element = document.createTextNode(element);
+		}
 		
 		if (context === undefined) {
 			context = "bottom";
@@ -151,14 +147,6 @@ this._amoeba = this._amoeba || (function (global, document) {
 		var rel, children;
 
 		switch (context) {
-
-			case "top":
-				children = getChildren(parent);
-				rel = (children) ? children[0] : false;
-				break;
-
-			case "bottom":
-				break;
 
 			case "before":
 				rel = parent;
@@ -169,6 +157,12 @@ this._amoeba = this._amoeba || (function (global, document) {
 				rel = getNext(parent);
 				parent = (!rel) ? parent : parent.parentNode;
 				break;
+
+			case "bottom":
+				break;
+
+			case "top":
+				context = 0;
 
 			default:
 				if (type(context) === "number") {
@@ -197,25 +191,14 @@ this._amoeba = this._amoeba || (function (global, document) {
 
 	get = function (selector, parent) {
 		if (typeof selector !== "string") {
-			return new Wrapper(selector);
+			return selector;
 		}
 
-		var element = (parent || document).querySelector(selector);
-
-		return (element) ? new Wrapper(element) : element;
+		return (parent || document).querySelector(selector);
 	},
 
-
 	getAll = function (selector, parent) {
-		var nodelist = (parent || document).querySelectorAll(selector),
-			i = nodelist.length,
-			elements = [];
-
-		while (i--) {
-			elements[i] = new Wrapper(nodelist[i]);
-		}
-
-		return elements;
+		return (parent || document).querySelectorAll(selector);
 	},
 
 	getChildren = function (element, selector) {
@@ -226,7 +209,7 @@ this._amoeba = this._amoeba || (function (global, document) {
 
 		for (i = 0; i < length; i++) {
 			element = children[i];
-			if (element.nodeType === 1 && (!selector || match(element, selector))) {
+			if (element.nodeType === 1 && (!selector || match(element, selector))) {
 				elements.push(element);
 			}
 		}
@@ -248,10 +231,8 @@ this._amoeba = this._amoeba || (function (global, document) {
 		element = element.nextSibling;
 
 		while (element) {
-			if (element.nodeType === 1) {
-				if (!selector || match(element, selector)) {
-					return element;
-				}
+			if (element.nodeType === 1 && (!selector || match(element, selector))) {
+				return element;
 			}
 			element = element.nextSibling;
 		}
@@ -263,10 +244,8 @@ this._amoeba = this._amoeba || (function (global, document) {
 		element = element.previousSibling;
 
 		while (element) {
-			if (element.nodeType === 1) {
-				if (!selector || match(element, selector)) {
-					return element;
-				}
+			if (element.nodeType === 1 && (selector || match(element, selector))) {
+				return element;
 			}
 			element = element.previousSibling;
 		}
@@ -281,7 +260,6 @@ this._amoeba = this._amoeba || (function (global, document) {
 	match = function (element, selector) {
 		return matchesSelector.call(element, selector);
 	},
-
 	
 	util = {
 
@@ -293,7 +271,7 @@ this._amoeba = this._amoeba || (function (global, document) {
 				script.on("load", callback);
 			}
 			
-			script.el.src = url;
+			script.src = url;
 			
 			return script;
 		},
@@ -345,8 +323,39 @@ this._amoeba = this._amoeba || (function (global, document) {
 		
 		template: template,
 		
-		create: create
+		create: function () {
+			return new Wrapper(create.apply(null, arguments));
+		}
 		
+	},
+	
+	wrap = function (element) {
+		return (element) ? new Wrapper(element) : element;
+	},
+	
+	wrapAll = function (elements) {
+		var i = elements.length,
+			_elements = [];
+
+		while (i--) {
+			_elements[i] = new Wrapper(elements[i]);
+		}
+		
+		return _elements;
+	},
+	
+	getWrapped = function (selector, parent) {
+		return wrap(get(selector, parent));
+	},
+	
+	getAllWrapped = function (selector, parent) {
+		return wrapAll(getAll(selector, parent));
+	},
+
+	Wrapper = function (element) {
+		this.el = element || null;
+		
+		return this;
 	};
 	
 	/*
@@ -368,10 +377,10 @@ this._amoeba = this._amoeba || (function (global, document) {
 	Wrapper.prototype = {
 
 		insert: function (contents, context) {
-			var i, content, length,
+			var i, length, content,
 				contentType = type(contents);
 			
-			if (contentType === "string" || contentType === "element") {
+			if (contentType !== "array") {
 				contents = [contents];
 			}
 			
@@ -379,57 +388,34 @@ this._amoeba = this._amoeba || (function (global, document) {
 			
 			for (i = 0; i < length; i++) {
 				content = contents[i];
-				insert(
-					this.el,
-					(content.nodeName) ? content : document.createTextNode(content),
-					context
-				);
+				insert(this.el, content.el || content , context);
 			}
 		
 			return this;
 		},
 
 		get: function (selector) {
-			return get(selector, this.el);
+			return getWrapped(selector, this.el);
 		},
 
 		getAll: function (selector) {
-			return getAll(selector, this.el);
+			return getAllWrapped(selector, this.el);
 		},
 
 		children: function (selector) {
-			var i,
-				elements = getChildren(this.el, selector),
-				length = elements.length;
-				
-			for (i = 0; i < length; i++) {
-				elements[i] = new Wrapper(elements[i]);
-			}
-			
-			return elements;
+			return wrapAll(getChildren(this.el, selector));
 		},
 
 		siblings: function (selector) {
-			var i,
-				elements = getSiblings(this.el, selector),
-				length = elements.length;
-				
-			for (i = 0; i < length; i++) {
-				elements[i] = new Wrapper(elements[i]);
-			}
-			
-			return elements;
+			return wrapAll(getSiblings(this.el, selector));
 		},
 
 		next: function (selector) {
-			var element = getNext(this.el, selector);
-			
-			return (element) ? new Wrapper(element) : element;
+			return wrap(getNext(this.el, selector));
 		},
 
 		prev: function (selector) {
-			var element = getPrevious(this.el, selector);
-			return (element) ? new Wrapper(element) : element;
+			return wrap(getPrevious(this.el, selector));
 		},
 
 /*
@@ -477,12 +463,15 @@ this._amoeba = this._amoeba || (function (global, document) {
 		},
 
 		on: function (event, func) {
-			if (~event.indexOf(" ")) {
+			var useCapture = false;
+			if (event.indexOf(" ") > -1) {
 				var _func = func,
 					split = event.split(" "),
 					selector = split[1];
 				
 				event = split[0];
+				
+				useCapture = true;
 				
 				func = function (e) {
 					var target = e.target;
@@ -492,7 +481,7 @@ this._amoeba = this._amoeba || (function (global, document) {
 					}
 				}
 			}
-			this.el.addEventListener(event, func, false);
+			this.el.addEventListener(event, func, useCapture);
 			
 			return this;
 		},
@@ -506,7 +495,7 @@ this._amoeba = this._amoeba || (function (global, document) {
 	};
 	
 	return function (callback) {
-		callback(get, getAll, util);
+		callback(getWrapped, getAllWrapped, util);
 	};
 
 } (this, document));
