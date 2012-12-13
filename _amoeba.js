@@ -324,7 +324,7 @@ this._amoeba = this._amoeba || (function (global, document) {
 		template: template,
 		
 		create: function () {
-			return new Wrapper(create.apply(null, arguments));
+			return wrap(create.apply(null, arguments));
 		}
 		
 	},
@@ -476,7 +476,7 @@ this._amoeba = this._amoeba || (function (global, document) {
 				func = function (e) {
 					var target = e.target;
 					if (match(target, selector)) {
-						_func.apply(target, [e, new Wrapper(target)]);
+						_func.apply(target, [e, wrap(target)]);
 						e.stopPropagation();
 					}
 				}
