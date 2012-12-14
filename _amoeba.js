@@ -29,12 +29,12 @@ this._amoeba = this._amoeba || (function (global, document) {
 	each = function (subject, func, bind) {
 		var key, i, length, _type = type(subject);
 
-		if (_type === "number") {
+		if (_type == "number") {
 				for (i = 0; i < subject; i++) {
 					func.call(bind || subject, i, i);
 				}
 		}
-		else if (_type === "object") {
+		else if (_type == "object") {
 			for (key in subject) {
 				if (subject.hasOwnProperty(key)) {
 					func.call(bind || subject, subject[ key ], key);
@@ -42,10 +42,10 @@ this._amoeba = this._amoeba || (function (global, document) {
 			}
 		}
 		else {
-			if (_type === "string") {
+			if (_type == "string") {
 				subject = subject.split("");
 			}
-			if (_type === "array" || _type === "nodelist" || _type === "htmlcollection") {
+			if (_type == "array" || _type == "nodelist" || _type == "htmlcollection") {
 				length = subject.length;
 				for (i = 0; i < length; i++) {
 					func.call(bind || subject, subject[i], i);
@@ -61,9 +61,9 @@ this._amoeba = this._amoeba || (function (global, document) {
 	extend = function (subject, properties) {
 		each(properties, function (value, key) {
 			var valueType = type(value);
-			if (valueType === "array" || valueType === "object") {
+			if (valueType == "array" || valueType == "object") {
 				if (!(key in subject)) {
-					subject[key] = (valueType === "array") ? [] : {};
+					subject[key] = (valueType == "array") ? [] : {};
 				}
 				extend(subject[key], value);
 			}
@@ -117,7 +117,7 @@ this._amoeba = this._amoeba || (function (global, document) {
 	create = function (tag, options, parent, context) {
 		var element = document.createElement(tag);
 		
-		if (type(options) === "element") {
+		if (type(options) == "element") {
 			context = parent || null;
 			parent = options;
 			options = null;
@@ -136,11 +136,11 @@ this._amoeba = this._amoeba || (function (global, document) {
 
 	insert = function (parent, element, context) {
 		
-		if (type(element) === "string") {
+		if (type(element) == "string") {
 			element = document.createTextNode(element);
 		}
 		
-		if (context === undefined) {
+		if (context == undefined) {
 			context = "bottom";
 		}
 		
@@ -165,7 +165,7 @@ this._amoeba = this._amoeba || (function (global, document) {
 				context = 0;
 
 			default:
-				if (type(context) === "number") {
+				if (type(context) == "number") {
 					children = getChildren(parent);
 					if (context < 0) {
 						context += children.length;
@@ -190,7 +190,7 @@ this._amoeba = this._amoeba || (function (global, document) {
 	//erase: function () {},
 
 	get = function (selector, parent) {
-		if (typeof selector !== "string") {
+		if (typeof selector != "string") {
 			return selector;
 		}
 
@@ -209,7 +209,7 @@ this._amoeba = this._amoeba || (function (global, document) {
 
 		for (i = 0; i < length; i++) {
 			element = children[i];
-			if (element.nodeType === 1 && (!selector || match(element, selector))) {
+			if (element.nodeType == 1 && (!selector || match(element, selector))) {
 				elements.push(element);
 			}
 		}
@@ -231,7 +231,7 @@ this._amoeba = this._amoeba || (function (global, document) {
 		element = element.nextSibling;
 
 		while (element) {
-			if (element.nodeType === 1 && (!selector || match(element, selector))) {
+			if (element.nodeType == 1 && (!selector || match(element, selector))) {
 				return element;
 			}
 			element = element.nextSibling;
@@ -244,7 +244,7 @@ this._amoeba = this._amoeba || (function (global, document) {
 		element = element.previousSibling;
 
 		while (element) {
-			if (element.nodeType === 1 && (selector || match(element, selector))) {
+			if (element.nodeType == 1 && (selector || match(element, selector))) {
 				return element;
 			}
 			element = element.previousSibling;
@@ -285,7 +285,7 @@ this._amoeba = this._amoeba || (function (global, document) {
 			
 			if (data) {
 				data = toQuery(data);
-				if (mode === "GET") {
+				if (mode == "GET") {
 					url += "?" + data;
 					data = null;
 				}
@@ -364,7 +364,7 @@ this._amoeba = this._amoeba || (function (global, document) {
 			var i, length, content,
 				contentType = type(contents);
 			
-			if (contentType !== "array") {
+			if (contentType != "array") {
 				contents = [contents];
 			}
 			
@@ -425,7 +425,7 @@ this._amoeba = this._amoeba || (function (global, document) {
 				classList = element.className.split(/\s+/),
 				index = classList.indexOf(className);
 			
-			if (index === -1) {
+			if (index == -1) {
 				classList.push(className);
 				element.className = classList.join(" ");
 			}
