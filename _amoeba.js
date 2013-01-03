@@ -26,18 +26,21 @@ this._amoeba = this._amoeba || (function (global, document) {
 		return type;
 	},
 
-	each = function (subject, func, bind) {
-		var key, i = 0, length, _type = type(subject);
+	each = function (subject, callback, bind) {
+		var key,
+			index = 0,
+			length,
+			_type = type(subject);
 
 		if (_type == "number") {
-				while (i < subject) {
-					func.call(bind || subject, i++);
+				while (index < subject) {
+					callback.call(bind || subject, index++);
 				}
 		}
 		else if (_type == "object") {
 			for (key in subject) {
 				if (subject.hasOwnProperty(key)) {
-					func.call(bind || subject, subject[ key ], key, i++);
+					callback.call(bind || subject, subject[ key ], key, index++);
 				}
 			}
 		}
@@ -47,8 +50,8 @@ this._amoeba = this._amoeba || (function (global, document) {
 			}
 			if (_type == "array" || _type == "nodelist" || _type == "htmlcollection") {
 				length = subject.length;
-				while (i < length) {
-					func.call(bind || subject, subject[i], i++);
+				while (index < length) {
+					callback.call(bind || subject, subject[index], index++);
 				}
 			}
 		}
@@ -144,18 +147,18 @@ this._amoeba = this._amoeba || (function (global, document) {
 			context = "bottom";
 		}
 		
-		var rel, children;
+		var relation, children;
 
 		switch (context) {
 
 			case "before":
-				rel = parent;
+				relation = parent;
 				parent = parent.parentNode;
 				break;
 
 			case "after":
-				rel = getNext(parent);
-				parent = (!rel) ? parent : parent.parentNode;
+				relation = getNext(parent);
+				parent = (!relation) ? parent : parent.parentNode;
 				break;
 
 			case "bottom":
@@ -171,14 +174,14 @@ this._amoeba = this._amoeba || (function (global, document) {
 						context += children.length;
 					}
 					if (children.length > context) {
-						rel = children[context + 1];
+						relation = children[context + 1];
 					}
 				}
 				break;
 
 		}
-		if (rel) {
-			parent.insertBefore(element, rel);
+		if (relation) {
+			parent.insertBefore(element, relation);
 		}
 		else {
 			parent.appendChild(element);
@@ -205,10 +208,10 @@ this._amoeba = this._amoeba || (function (global, document) {
 		var children = element.childNodes,
 			elements = [],
 			length = children.length,
-			i = 0;
+			index = 0;
 
-		while (i < length) {
-			element = children[i++];
+		while (index < length) {
+			element = children[index++];
 			if (element.nodeType == 1 && (!selector || match(element, selector))) {
 				elements.push(element);
 			}
@@ -334,11 +337,11 @@ this._amoeba = this._amoeba || (function (global, document) {
 	},
 	
 	wrapAll = function (elements) {
-		var i = elements.length,
+		var index = elements.length,
 			_elements = [];
 
-		while (i--) {
-			_elements[i] = new Wrapper(elements[i]);
+		while (index--) {
+			_elements[index] = new Wrapper(elements[index]);
 		}
 		
 		return _elements;
@@ -366,10 +369,10 @@ this._amoeba = this._amoeba || (function (global, document) {
 			
 			var content,
 				length = contents.length,
-				i = 0;
+				index = 0;
 			
-			while (i < length) {
-				content = contents[i++];
+			while (index < length) {
+				content = contents[index++];
 				insert(this.el, content.el || content , context);
 			}
 		
@@ -444,32 +447,32 @@ this._amoeba = this._amoeba || (function (global, document) {
 			return this;
 		},
 
-		on: function (event, func) {
+		on: function (eventType, callback) {
 			var useCapture = false;
-			if (event.indexOf(" ") > -1) {
-				var _func = func,
-					split = event.split(" "),
+			if (eventType.indexOf(" ") > -1) {
+				var _callback = callback,
+					split = eventType.split(" "),
 					selector = split[1];
 				
-				event = split[0];
+				eventType = split[0];
 				
 				useCapture = true;
 				
-				func = function (e) {
-					var target = e.target;
+				callback = function (event) {
+					var target = event.target;
 					if (match(target, selector)) {
-						_func.apply(target, [e, wrap(target)]);
-						e.stopPropagation();
+						_callback.apply(target, [event, wrap(target)]);
+						event.stopPropagation();
 					}
 				}
 			}
-			this.el.addEventListener(event, func, useCapture);
+			this.el.addEventListener(eventType, callback, useCapture);
 			
 			return this;
 		},
 
-		off: function (event, func) {
-			this.el.removeEventListener(event, func, false);
+		off: function (eventType, callback) {
+			this.el.removeEventListener(eventType, callback, false);
 			
 			return this;
 		}
