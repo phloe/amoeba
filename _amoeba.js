@@ -1,3 +1,8 @@
+// _amoeba.js - micro api for bookmarklets.
+// https://github.com/rasmusfl0e/amoeba
+
+/*jshint forin:true, noarg:true, noempty:true, strict:true, undef:true, unused:true, curly:true, browser:true, indent:4, maxerr:50 */
+
 this._amoeba = this._amoeba || (function (global, document) {
 	"use strict";
 
@@ -143,7 +148,7 @@ this._amoeba = this._amoeba || (function (global, document) {
 			element = document.createTextNode(element);
 		}
 		
-		if (context == undefined) {
+		if (context === undefined) {
 			context = "bottom";
 		}
 		
@@ -291,9 +296,9 @@ this._amoeba = this._amoeba || (function (global, document) {
 		
 		xhr.open(mode, url, async);
 		
-		for (var key in headers) {
-			xhr.setRequestHeader(key, headers[key]);
-		}
+		each(headers, function (header, key) {
+			xhr.setRequestHeader(key, header);
+		});
 		
 		if (callback) {
 			xhr.onload = function () {
@@ -464,7 +469,7 @@ this._amoeba = this._amoeba || (function (global, document) {
 						_callback.apply(target, [event, wrap(target)]);
 						event.stopPropagation();
 					}
-				}
+				};
 			}
 			this.el.addEventListener(eventType, callback, useCapture);
 			
