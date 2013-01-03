@@ -265,13 +265,13 @@ this._amoeba = this._amoeba || (function (global, document) {
 
 		
 		load: function (url, callback) {
-			var script = create("script", document.body);
+			var script = wrap(create("script", document.body));
 				
 			if (callback) {
 				script.on("load", callback);
 			}
 			
-			script.src = url;
+			script.el.src = url;
 			
 			return script;
 		},
@@ -296,9 +296,9 @@ this._amoeba = this._amoeba || (function (global, document) {
 			
 			xhr.open(mode, url, async);
 			
-			each(headers, function (value, key) {
-				xhr.setRequestHeader(key, value);
-			});
+			for (var key in headers) {
+				xhr.setRequestHeader(key, headers[key]);
+			}
 			
 			if (callback) {
 				xhr.onload = function () {
@@ -354,8 +354,6 @@ this._amoeba = this._amoeba || (function (global, document) {
 
 	Wrapper = function (element) {
 		this.el = element || null;
-		
-		return this;
 	};
 
 	Wrapper.prototype = {
