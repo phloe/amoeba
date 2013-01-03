@@ -27,17 +27,17 @@ this._amoeba = this._amoeba || (function (global, document) {
 	},
 
 	each = function (subject, func, bind) {
-		var key, i, length, _type = type(subject);
+		var key, i = 0, length, _type = type(subject);
 
 		if (_type == "number") {
-				for (i = 0; i < subject; i++) {
-					func.call(bind || subject, i, i);
+				while (i < subject) {
+					func.call(bind || subject, i++);
 				}
 		}
 		else if (_type == "object") {
 			for (key in subject) {
 				if (subject.hasOwnProperty(key)) {
-					func.call(bind || subject, subject[ key ], key);
+					func.call(bind || subject, subject[ key ], key, i++);
 				}
 			}
 		}
@@ -47,8 +47,8 @@ this._amoeba = this._amoeba || (function (global, document) {
 			}
 			if (_type == "array" || _type == "nodelist" || _type == "htmlcollection") {
 				length = subject.length;
-				for (i = 0; i < length; i++) {
-					func.call(bind || subject, subject[i], i);
+				while (i < length) {
+					func.call(bind || subject, subject[i], i++);
 				}
 			}
 		}
@@ -202,13 +202,13 @@ this._amoeba = this._amoeba || (function (global, document) {
 	},
 
 	getChildren = function (element, selector) {
-		var i, l,
-			children = element.childNodes,
+		var children = element.childNodes,
+			elements = [],
 			length = children.length,
-			elements = [];
+			i = 0;
 
-		for (i = 0; i < length; i++) {
-			element = children[i];
+		while (i < length) {
+			element = children[i++];
 			if (element.nodeType == 1 && (!selector || match(element, selector))) {
 				elements.push(element);
 			}
@@ -227,30 +227,25 @@ this._amoeba = this._amoeba || (function (global, document) {
 		return elements;
 	},
 
-	getNext = function(element, selector) {
-		element = element.nextSibling;
+	getSibling = function(element, selector, context) {
+		element = element[context];
 
 		while (element) {
 			if (element.nodeType == 1 && (!selector || match(element, selector))) {
 				return element;
 			}
-			element = element.nextSibling;
+			element = element[context];
 		}
 
 		return null;
 	},
 
+	getNext = function(element, selector) {
+		return getSibling(element, selector, "nextSibling");
+	},
+
 	getPrevious = function(element, selector) {
-		element = element.previousSibling;
-
-		while (element) {
-			if (element.nodeType == 1 && (selector || match(element, selector))) {
-				return element;
-			}
-			element = element.previousSibling;
-		}
-
-		return null;
+		return getSibling(element, selector, "previousSibling");
 	},
 
 	html = document.documentElement,
@@ -261,55 +256,60 @@ this._amoeba = this._amoeba || (function (global, document) {
 		return matchesSelector.call(element, selector);
 	},
 	
+	load = function (url, callback) {
+		var script = create("script", document.body);
+			
+		if (callback) {
+			script.onload = callback;
+		}
+		
+		script.src = url;
+		
+		return script;
+	},
+	
+	request = function (url, callback, data, mode, async, headers) {
+		var xhr = new XMLHttpRequest();
+		
+		headers = headers || {};
+		mode = mode || "GET";
+		async = (async === undefined) ? true : async;
+		
+		if (data) {
+			data = toQuery(data);
+			if (mode == "GET") {
+				url += "?" + data;
+				data = null;
+			}
+			else if (!("Content-type" in headers)) {
+				headers["Content-type"] = "application/x-www-form-urlencoded";
+			}
+		}
+		
+		xhr.open(mode, url, async);
+		
+		for (var key in headers) {
+			xhr.setRequestHeader(key, headers[key]);
+		}
+		
+		if (callback) {
+			xhr.onload = function () {
+				callback(xhr.responseText, xhr.responseXML);
+			};
+		}
+		
+		xhr.send(data);
+		
+		return xhr;
+	},
+	
 	util = {
 
-		
-		load: function (url, callback) {
-			var script = wrap(create("script", document.body));
-				
-			if (callback) {
-				script.on("load", callback);
-			}
-			
-			script.el.src = url;
-			
-			return script;
+		load: function () {
+			return wrap(load.apply(null, arguments));
 		},
 		
-		request: function (url, callback, data, mode, async, headers) {
-			var xhr = new XMLHttpRequest();
-			
-			headers = headers || {};
-			mode = mode || "GET";
-			async = (async === undefined) ? true : async;
-			
-			if (data) {
-				data = toQuery(data);
-				if (mode == "GET") {
-					url += "?" + data;
-					data = null;
-				}
-				else if (!("Content-type" in headers)) {
-					headers["Content-type"] = "application/x-www-form-urlencoded";
-				}
-			}
-			
-			xhr.open(mode, url, async);
-			
-			for (var key in headers) {
-				xhr.setRequestHeader(key, headers[key]);
-			}
-			
-			if (callback) {
-				xhr.onload = function () {
-					callback(xhr.responseText, xhr.responseXML);
-				};
-			}
-			
-			xhr.send(data);
-			
-			return xhr;
-		},
+		request: request,
 		
 		type: type,
 		
@@ -359,17 +359,17 @@ this._amoeba = this._amoeba || (function (global, document) {
 	Wrapper.prototype = {
 
 		insert: function (contents, context) {
-			var i, length, content,
-				contentType = type(contents);
 			
-			if (contentType != "array") {
+			if (type(contents) != "array") {
 				contents = [contents];
 			}
 			
-			length = contents.length;
+			var content,
+				length = contents.length,
+				i = 0;
 			
-			for (i = 0; i < length; i++) {
-				content = contents[i];
+			while (i < length) {
+				content = contents[i++];
 				insert(this.el, content.el || content , context);
 			}
 		

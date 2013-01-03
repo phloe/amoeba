@@ -140,7 +140,7 @@ Iterates through the supplied subject and calls the callback function on each st
 ###### Arguments
 
 * `subject` (Number, String, Array, Object or HtmlCollection) Variable to iterate through. If a number is supplied the callback function is called that number of times.
-* `func` (Function) Callback function to call every iteration step.
+* `func` (Function) Callback function to call every iteration step. Arguments passed into the function for objects are; `value`, `key` and `index`. For other subject types; `value` and `index`.
 * `bind` (Object) Optional. Variable to bind the this keyword to inside the callback function.
 
 ###### Example
