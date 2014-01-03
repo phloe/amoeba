@@ -511,3 +511,6 @@ Remove an event from the wrapped element.
 	};
 	$("button").off("click", handleClick);
 
+
+
+[![Analytics](https://ga-beacon.appspot.com/UA-8318361-2/rasmusfl0e/amoeba)](https://github.com/igrigorik/ga-beacon)
