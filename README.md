@@ -10,8 +10,6 @@ Amoeba was made from the following assumptions:
 
 It currently weighs in at just 2.1Kb minified and gzipped.
 
-It's used in the bookmarklet builder on [amoeba-js.net](http://amoeba-js.net/).
-
 
 
 ## _amoeba
