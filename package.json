@@ -1,0 +1,30 @@
+{
+  "name": "amoeba",
+  "version": "2.0.0",
+  "description": "Micro API designed for use in bootstrap bookmarklets.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "build": "webpack && npm run amoeba-min && npm run bootstrap-min && npm run bootstrap_chain-min",
+    "amoeba-min": "uglifyjs dist/_amoeba.js -c -m -o dist/_amoeba-min.js && gzip-size dist/_amoeba-min.js",
+    "bootstrap-min": "uglifyjs bootstrap.js -c -m -o dist/bootstrap-min.js && gzip-size dist/bootstrap-min.js",
+    "bootstrap_chain-min": "uglifyjs bootstrap_chain.js -c -m -o dist/bootstrap_chain-min.js && gzip-size dist/bootstrap_chain-min.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rasmusfl0e/amoeba.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rasmusfl0e/amoeba/issues"
+  },
+  "homepage": "https://github.com/rasmusfl0e/amoeba",
+  "devDependencies": {
+    "gzip-size": "^1.0.0",
+    "uglify-js": "^2.4.16",
+    "webpack": "^1.5.3"
+  }
+}

@@ -1,4 +1,4 @@
-![Amoeba micro API](http://amoeba-js.net/img/logotype.png)
+![Amoeba micro API](http://amoeba-js.net/img/type.svg)
 
 Micro API designed for use in bootstrap bookmarklets.
 
@@ -6,9 +6,9 @@ Amoeba was made from the following assumptions:
 
 1. Smaller size is more important than features; existing libraries are too big and may also collide with other scripts.
 
-2. Only modern browsers need to be supported; users are expected to be intermediate to advanced users.
+2. Only modern browsers (IE9+) need to be supported; users are expected to be intermediate to advanced users.
 
-It currently weighs in at just 1.8Kb minified and gzipped.
+It currently weighs in at just 2.1Kb minified and gzipped.
 
 It's used in the bookmarklet builder on [amoeba-js.net](http://amoeba-js.net/).
 
@@ -22,7 +22,7 @@ References are passed into the callback function as arguments (so you could call
 	_amoeba(function($, $$, _){
 		var page = $("#page");
 		if (page.match(".active")) {
-			page.getAll("div");
+			var divs = page.getAll("div");
 		}
 	});
 
@@ -242,7 +242,7 @@ Returns a template string populated with the data of the supplied object.
 ### create
 
 Returns a newly created DOM element with the supplied properties from the options object. The created element is appended to the parent element if supplied. If a context is
-The options argument can be omited in favor of the parent argument.
+The options argument can be omitted in favour of the parent argument.
 
 ###### Arguments
 
@@ -383,7 +383,7 @@ Returns the next sibling element. If the selector argument is supplied the first
 
 ### prev
 
-Returns the previous sibling element. If the selector argument is supplied the first matching sibling element preceeding it will be returned.
+Returns the previous sibling element. If the selector argument is supplied the first matching sibling element preceding it will be returned.
 
 ###### Arguments
 
@@ -511,6 +511,3 @@ Remove an event from the wrapped element.
 	};
 	$("button").off("click", handleClick);
 
-
-
-[![Analytics](https://ga-beacon.appspot.com/UA-8318361-2/rasmusfl0e/amoeba)](https://github.com/igrigorik/ga-beacon)

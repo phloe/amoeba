@@ -33,3 +33,8 @@ ehthumbs.db
 Icon?
 Thumbs.db
 index.html
+
+# Project files #
+#################
+dist/
+node_modules/
