@@ -1,19 +1,23 @@
 var type = require("./type");
-var each = require("./each");
 
-module.exports = function (subject, properties) {
-	each(properties, function (value, key) {
-		var _type = type(value);
-		if (_type === "array" || _type === "object") {
-			if (!(key in subject)) {
-				subject[key] = (_type === "array") ? [] : {};
+module.exports = function extend (subject, properties) {
+	var property, value, _type;
+	
+	for (property in properties) {
+		if (properties.hasOwnProperty(property)) {
+			value = properties[property]
+			_type = type(value);
+			if (_type === "array" || _type === "object") {
+				if (!(key in subject)) {
+					subject[key] = (_type === "array") ? [] : {};
+				}
+				extend(subject[key], value);
 			}
-			extend(subject[key], value);
+			else {
+				subject[key] = value;
+			}
 		}
-		else {
-			subject[key] = value;
-		}
-	});
+	}
 
 	return subject;
 };

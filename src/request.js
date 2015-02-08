@@ -1,9 +1,9 @@
-var each = require("./each");
 var toQuery = require("./toQuery");
 
 module.exports = function (url, callback, data, mode, async, headers) {
 	var xhr = new XMLHttpRequest();
-
+	var key;
+	
 	headers = headers || {};
 	mode = mode || "get";
 	async = (async === undefined) ? true : async;
@@ -21,9 +21,9 @@ module.exports = function (url, callback, data, mode, async, headers) {
 
 	xhr.open(mode, url, async);
 
-	each(headers, function (header, key) {
-		xhr.setRequestHeader(key, header);
-	});
+	for (key in headers) {
+		xhr.setRequestHeader(key, headers[key]);
+	}
 
 	if (callback) {
 		xhr.onload = function () {

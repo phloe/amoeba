@@ -1,7 +1,7 @@
-var create = require("./create");
-
 module.exports = function (url, callback) {
-	var script = create("script", document.body);
+	var script = document.createElement("script");
+	var head = document.head || document.getElementsByTagName("head")[0];
+	head.appendChild(script);
 
 	if (callback) {
 		script.onload = callback;

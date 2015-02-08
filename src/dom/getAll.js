@@ -1,5 +1,5 @@
-var toArray = require("../toArray");
+var slice = [].slice;
 
 module.exports = function (selector, parent) {
-	return toArray((parent || document).querySelectorAll(selector));
+	return slice.call((parent || document).querySelectorAll(selector));
 };

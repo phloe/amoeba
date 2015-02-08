@@ -10,7 +10,8 @@
     "build": "webpack && npm run amoeba-min && npm run bootstrap-min && npm run bootstrap_chain-min",
     "amoeba-min": "uglifyjs dist/_amoeba.js -c -m -o dist/_amoeba-min.js && gzip-size dist/_amoeba-min.js",
     "bootstrap-min": "uglifyjs bootstrap.js -c -m -o dist/bootstrap-min.js && gzip-size dist/bootstrap-min.js",
-    "bootstrap_chain-min": "uglifyjs bootstrap_chain.js -c -m -o dist/bootstrap_chain-min.js && gzip-size dist/bootstrap_chain-min.js"
+    "bootstrap_chain-min": "uglifyjs bootstrap_chain.js -c -m -o dist/bootstrap_chain-min.js && gzip-size dist/bootstrap_chain-min.js",
+    "lint": "eslint -c ./eslint.config.json ./index.js"
   },
   "repository": {
     "type": "git",
@@ -26,5 +27,8 @@
     "gzip-size": "^1.0.0",
     "uglify-js": "^2.4.16",
     "webpack": "^1.5.3"
+  },
+  "dependencies": {
+    "eslint": "^0.14.1"
   }
 }

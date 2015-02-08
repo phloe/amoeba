@@ -1,8 +1,8 @@
 var matches = require("./matches");
-var toArray = require("../toArray");
+var slice = [].slice;
 
 module.exports = function (element, selector) {
-	var children = toArray(element.children);
+	var children = slice.call(element.children);
 	
 	if (selector) {
 		return children.filter(function (element) {

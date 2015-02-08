@@ -1,13 +1,10 @@
-var each = require("./each");
-
 module.exports = function (subject) {
-	var vars = [];
+	var string = "";
+	var key;
 
-	each(subject, function (value, key) {
-		vars.push(
-			encodeURIComponent(key) + "=" + encodeURIComponent(value)
-		);
-	});
+	for (key in subject) {
+		string += (string ? "&" : "") + encodeURIComponent(key) + "=" + encodeURIComponent(subject[key]);
+	}
 
-	return vars.join("&");
+	return string;
 };

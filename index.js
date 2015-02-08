@@ -3,7 +3,6 @@
 
 
 var type = require("./src/type");
-var each = require("./src/each");
 var request = require("./src/request");
 var extend = require("./src/extend");
 var toQuery = require("./src/toQuery");
@@ -36,8 +35,6 @@ var util = {
 	request: request,
 
 	type: type,
-
-	each: each,
 
 	extend: extend,
 

@@ -1,10 +1,6 @@
-var type = require("../type");
-var getNext = require("./getNext");
-var getChildren = require("./getChildren");
-
 module.exports = function (parent, element, context) {
 
-	if (type(element) === "string") {
+	if (typeof element === "string") {
 		element = document.createTextNode(element);
 	}
 
@@ -22,7 +18,7 @@ module.exports = function (parent, element, context) {
 			break;
 
 		case "after":
-			relation = getNext(parent);
+			relation = parent.nextElementSibling;
 			parent = (!relation) ? parent : parent.parentNode;
 			break;
 
@@ -33,8 +29,8 @@ module.exports = function (parent, element, context) {
 			context = 0;
 
 		default:
-			if (type(context) === "number") {
-				children = getChildren(parent);
+			if (typeof context === "number") {
+				children = parent.children;
 				if (context < 0) {
 					context += children.length;
 				}
