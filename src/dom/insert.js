@@ -1,4 +1,5 @@
 module.exports = function (parent, element, context) {
+	var relation, children;
 
 	if (typeof element === "string") {
 		element = document.createTextNode(element);
@@ -7,8 +8,6 @@ module.exports = function (parent, element, context) {
 	if (context === undefined) {
 		context = "bottom";
 	}
-
-	var relation, children;
 
 	switch (context) {
 
@@ -25,18 +24,23 @@ module.exports = function (parent, element, context) {
 		case "bottom":
 			break;
 
+		/*
+			gets caught by default.
+		
 		case "top":
 			context = 0;
-
+		*/
+		
 		default:
-			if (typeof context === "number") {
-				children = parent.children;
-				if (context < 0) {
-					context += children.length;
-				}
-				if (children.length > context) {
-					relation = children[context + 1];
-				}
+			if (typeof context !== "number") {
+				context = 0;
+			}
+			children = parent.children;
+			if (context < 0) {
+				context += children.length;
+			}
+			if (children.length > context) {
+				relation = children[context + 1];
 			}
 			break;
 

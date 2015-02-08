@@ -1,16 +1,18 @@
 var toQuery = require("./toQuery");
 
-module.exports = function (url, callback, data, mode, async, headers) {
-	var xhr = new XMLHttpRequest();
-	var key;
+module.exports = function (url, callback, options) {
+	options = options || {};
 	
-	headers = headers || {};
-	mode = mode || "get";
-	async = (async === undefined) ? true : async;
+	var xhr = new XMLHttpRequest();
+	var data = options.data || null;
+	var method = options.method || "get";
+	var async = ("async" in options) ? options.async : true;
+	var headers = options.headers || {};
+	var key;
 
 	if (data) {
 		data = toQuery(data);
-		if (mode.toLowerCase() === "get") {
+		if (method.toLowerCase() === "get") {
 			url += "?" + data;
 			data = null;
 		}

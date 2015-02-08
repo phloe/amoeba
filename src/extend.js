@@ -5,7 +5,7 @@ module.exports = function extend (subject, properties) {
 	
 	for (property in properties) {
 		if (properties.hasOwnProperty(property)) {
-			value = properties[property]
+			value = properties[property];
 			_type = type(value);
 			if (_type === "array" || _type === "object") {
 				if (!(key in subject)) {
