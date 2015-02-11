@@ -12,6 +12,7 @@ var template = require("./src/string/template");
 
 var create = require("./src/dom/create");
 var insert = require("./src/dom/insert");
+var remove = require("./src/dom/remove");
 var addClass = require("./src/dom/addClass");
 var removeClass = require("./src/dom/removeClass");
 var contains = require("./src/dom/contains");
@@ -28,8 +29,12 @@ var load = require("./src/dom/load");
 
 var util = {
 
+	create: function () {
+		return new Wrapper(create.apply(null, arguments));
+	},
+
 	load: function () {
-		return wrap(load.apply(null, arguments));
+		return new Wrapper(load.apply(null, arguments));
 	},
 
 	request: request,
@@ -42,36 +47,9 @@ var util = {
 
 	parseQuery: parseQuery,
 
-	template: template,
-
-	create: function () {
-		return wrap(create.apply(null, arguments));
-	}
+	template: template
 
 };
-
-function wrap (element) {
-	return (element) ? new Wrapper(element) : element;
-}
-
-function wrapAll (elements) {
-	var index = elements.length;
-	var _elements = [];
-
-	while (index--) {
-		_elements[index] = new Wrapper(elements[index]);
-	}
-
-	return _elements;
-}
-
-function getWrapped (selector, parent) {
-	return wrap(get(selector, parent));
-}
-
-function getAllWrapped (selector, parent) {
-	return wrapAll(getAll(selector, parent));
-}
 
 function Wrapper (element) {
 	this.el = element || null;
@@ -97,32 +75,40 @@ Wrapper.prototype = {
 		return this;
 	},
 
+	remove: function () {
+		remove(this.el);
+		return this;
+	},
+
 	get: function (selector) {
-		return getWrapped(selector, this.el);
-	},
-
-	getAll: function (selector) {
-		return getAllWrapped(selector, this.el);
-	},
-
-	children: function (selector) {
-		return wrapAll(getChildren(this.el, selector));
-	},
-
-	siblings: function (selector) {
-		return wrapAll(getSiblings(this.el, selector));
+		var element = get(selector, this.el);
+		return element ? new Wrapper(element) : null;
 	},
 
 	next: function (selector) {
-		return wrap(getNext(this.el, selector));
+		var element = getNext(this.el, selector);
+		return element ? new Wrapper(element) : null;
 	},
 
 	prev: function (selector) {
-		return wrap(getPrevious(this.el, selector));
+		var element = getPrevious(this.el, selector);
+		return element ? new Wrapper(element) : null;
+	},
+
+	getAll: function (selector) {
+		return getAll(selector, this.el);
+	},
+
+	children: function (selector) {
+		return getChildren(this.el, selector);
+	},
+
+	siblings: function (selector) {
+		return getSiblings(this.el, selector);
 	},
 
 	contains: function (child) {
-		return contains(this.el, child.el);
+		return contains(this.el, child.el || child);
 	},
 
 	matches: function (selector) {
@@ -156,5 +142,8 @@ Wrapper.prototype = {
 };
 
 module.exports = function (callback) {
-	callback(getWrapped, getAllWrapped, util);
+	callback(function (selector) {
+		var element = get(selector);
+		return element ? new Wrapper(element) : null;
+	}, getAll, util);
 };

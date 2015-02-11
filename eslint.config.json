@@ -7,7 +7,7 @@
 		"guard-for-in": true,
 		"no-caller": true,
 		"no-empty": true,
-		//"strict": [2, "function"],
+		"strict": [2, "never"],
 		"no-undef": true,
 		"curly": true,
 		"no-mixed-spaces-and-tabs": true,

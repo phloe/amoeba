@@ -31,8 +31,8 @@ Finds an element matching the supplied selector or wraps an existing element.
 
 ###### Arguments
 
-* `selector` (String or Element) The CSS selector matching the element you want. Or an existing element.
-* `parent` (Element) Optional. If supplied 
+* `selector` (String or Element) The CSS selector matching the element you want - or an existing element.
+* `parent` (Element) Optional. Root element for the search.
 
 ###### Returns
 
@@ -46,7 +46,7 @@ Returns an array of elements that match the supplied selector.
 ###### Arguments
 
 * `selector` (String) The CSS selector matching the elements you want.
-* `parent` (Element) Optional.
+* `parent` (Element) Optional. Root element for the search.
 
 ###### Returns
 
@@ -86,10 +86,11 @@ Creates and sends an XMLHttpRequest.
 
 * `url` (String) The url of the script to be loaded.
 * `func` (Function) A function that is called with the XMLHttpRequest object as an argument when the script has loaded.
-* `data` (Object) Optional. An object containing the key-value pairs sent with the request.
-* `mode` (String) Optional. The mode of the request; "GET" or "POST" (case sensitive). Default is "GET"
-* `async` (Boolean) Optional. A boolean to set asynchronous mode on or off. Default is true.
-* `headers` (Object) Optional. An Object containing additional headers.
+* `options` (Object) Optional.
+   * `data` (Object) Optional. An object containing the key-value pairs sent with the request.
+   * `method` (String) Optional. The mode of the request; "get" or "post". Default is "get".	
+   * `async` (Boolean) Optional. A boolean to set asynchronous mode on or off. Default is true.
+   * `headers` (Object) Optional. An Object containing additional headers.
 
 ###### Returns
 
@@ -129,28 +130,6 @@ Identifies the type of the supplied variable.
 	//myType == "array"
 
 Credits: Kangax
-
-
-### each
-
-Iterates through the supplied subject and calls the callback function on each step.
-
-###### Arguments
-
-* `subject` (Number, String, Array, Object or HtmlCollection) Variable to iterate through. If a number is supplied the callback function is called that number of times.
-* `func` (Function) Callback function to call every iteration step. Arguments passed into the function for objects are; `value`, `key` and `index`. For other subject types; `value` and `index`.
-* `bind` (Object) Optional. Variable to bind the this keyword to inside the callback function.
-
-###### Example
-
-	var recipients = ["world", "steve", "dave"];
-	_.each(recipients, function (recipient, i) {
-		alert("Hello, " + recipient + ". You are number " + (i + 1));
-	});
-	// alerts:
-	// "Hello, world. You are number 1"
-	// "Hello, steve. You are number 2"
-	// "Hello, dave. You are number 3"
 
 
 
@@ -276,16 +255,34 @@ The options argument can be omitted in favour of the parent argument.
 
 ## Wrapper
 
+
 ### insert
 
-Inserts the supplied content into the parent element.
+Inserts the supplied content into the wrapped element.
 
 ###### Arguments
 
 * `content` (String, Number, Element, Array or HtmlCollection) Content to be appended. If an array is supplied it should only consist of strings (text or html), numbers or elements.
-* `parent` (Element) Element to append the supplied content to.
-* `context` (String or Number) Optional. A string or number that specifies the relation to the parent element; "top" - insert as the first elements inside parent. "bottom" - insert as the last elements inside parent. "before" - insert before parent (outside). "after" - insert after parent (outside). If the supplied context is a number it corresponds to the index of the childnodes where content will be inserted. Negative numbers have their index calculated in reverse. Default is "bottom".
+* `context` (String or Number) Optional. A string or number that specifies the relation to the parent element;
+   * `"top"` - insert as the first elements inside parent.
+   * `"bottom"` - insert as the last elements inside parent.
+   * `"before"` - insert before parent (outside).
+   * `"after"` - insert after parent (outside).
+   * a number - corresponds to the index of the childnodes where content will be inserted. Negative numbers have their index calculated in reverse.
+Default is `"bottom"`.
 
+###### Returns
+
+(Wrapper) The wrapped element.
+
+
+### remove 
+
+Remove the element from the DOM.
+
+###### Returns
+
+(Wrapper) The wrapped element.
 
 
 ### get
@@ -298,7 +295,7 @@ Finds the first element that matches the provided selector.
 
 ###### Returns
 
-(Element|Null) An element or null if no matching element is found.
+(Wrapper|Null) An element or null if no matching element is found.
 
 ###### Example
 
@@ -309,7 +306,7 @@ Finds the first element that matches the provided selector.
 
 ### getAll
 
-Returns an array containing all elements that match the supplied selector. If a parent argument is supplied only elements within that parent element is returned.
+Returns an array containing all elements that match the supplied selector.
 
 ###### Arguments
 
@@ -327,7 +324,7 @@ Returns an array containing all elements that match the supplied selector. If a 
 
 ### children
 
-Returns an array of wrapped child elements. If the selector argument is supplied only the elements matching it will be returned.
+Returns an array of child elements. If the selector argument is supplied only the elements matching it will be returned.
 
 ###### Arguments
 
@@ -345,7 +342,7 @@ Returns an array of wrapped child elements. If the selector argument is supplied
 
 ### siblings
 
-Returns an array of wrapped sibling elements. If the selector argument is supplied only the elements matching it will be returned.
+Returns an array of sibling elements. If the selector argument is supplied only the elements matching it will be returned.
 
 ###### Arguments
 
@@ -403,7 +400,7 @@ Returns true if the supplied child is a descendant of the wrapped element.
 
 ###### Arguments
 
-* `child` (Element) The element to test against.
+* `child` (Wrapper|Element) The element to test against.
 
 ###### Returns
 
