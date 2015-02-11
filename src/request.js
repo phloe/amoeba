@@ -27,11 +27,9 @@ module.exports = function (url, callback, options) {
 		xhr.setRequestHeader(key, headers[key]);
 	}
 
-	if (callback) {
-		xhr.onload = function () {
-			callback(xhr.responseText, xhr.responseXML);
-		};
-	}
+	xhr.onload = function () {
+		callback(xhr.responseText, xhr.responseXML);
+	};
 
 	xhr.send(data);
 
