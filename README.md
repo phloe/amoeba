@@ -15,12 +15,14 @@ It currently weighs in at just 1.9Kb minified and gzipped.
 Exposes the internal `$` (get) and `$$` (getAll) functions and `_` (util) namespace.
 References are passed into the callback function as arguments (so you could call them whatever you like).
 
+```js
 	_amoeba(function($, $$, _){
 		var page = $("#page");
 		if (page.match(".active")) {
 			var divs = page.getAll("div");
 		}
 	});
+```
 
 
 ## $ (get)
@@ -79,9 +81,11 @@ Loads a script onto the page and optionally executes a callback function on load
 
 ###### Example
 
+```js
 	_.load("http://amoeba-js.net/js", function(){
 		alert("script loaded");
 	});
+```
 
 
 ### _.request
@@ -104,6 +108,7 @@ Creates and sends an XMLHttpRequest.
 
 ###### Example
 
+```js
 	_.request(
 		"/api/data.json",
 		function (data) {
@@ -115,6 +120,7 @@ Creates and sends an XMLHttpRequest.
 		},
 		"GET"
 	);
+```
 
 
 ### _.type
@@ -131,12 +137,11 @@ Identifies the type of the supplied variable.
 
 ###### Example
 
+```js
 	var myVariable = ["hello", "world"];
 	var myType = _.type(myVariable);
 	//myType == "array"
-
-Credits: Kangax
-
+```
 
 
 ### _.extend
@@ -150,6 +155,7 @@ Extends (or overwrite) a given object with the properties of the supplied object
 
 ###### Example
 
+```js
 	var myObject = {
 		message: "hello",
 		recipient: "steve"
@@ -159,6 +165,7 @@ Extends (or overwrite) a given object with the properties of the supplied object
 	//	message: "hello",
 	//	recipient: "world"
 	//};
+```
 
 
 ### _.toQuery
@@ -171,13 +178,14 @@ Returns a querystring built from the supplied object.
 
 ###### Example
 
+```js
 	var myObject = {
 		message: "hello",
 		recipient: "world"
 	};
 	var myQueryString = _.toQuery(myObject);
 	// myQueryString = "message=hello&recipient=world";
-
+```
 
 
 ### _.parseQuery
@@ -190,14 +198,18 @@ Returns an object containing the querystring data contained in the supplied stri
 
 ###### Example
 
-	// window.location.href =
-	// "http://www.mydomain.com/index.php?message=hello&recipient=world";
+```js
+	/*
+		window.location.href = "http://www.mydomain.com/index.php?message=hello&recipient=world";
+	*/
 	var myObject = _.parseQuery(window.location.href);
-	//myObject = {
-	//	message: "hello",
-	//	recipient: "world"
-	//};
-
+	/*
+		myObject = {
+			message: "hello",
+			recipient: "world"
+		};
+	*/
+```
 
 
 ### _.template
@@ -208,7 +220,7 @@ Returns a template string populated with the data of the supplied object.
 
 * `template` - (String) A string with tokens.
 * `object` - (Object) An object containing the data needed for populating the template.
-* `delimiters` - (Array) Optional. An array containing 2 strings that define how tokens are marked up within the supplied template. Defaults are curly braces; { and }.
+* `delimiters` - (Array) Optional. An array containing 2 strings that define how tokens are marked up within the supplied template. Defaults are curly braces; `"{"` and `"}"`.
 
 ###### Example
 
@@ -239,7 +251,7 @@ The options argument can be omitted in favour of the parent argument.
 (Wrapper) A wrapped element.
 
 ###### Example
-
+```js
 	var myElement = _.create(
 		"button",
 		{
@@ -257,7 +269,7 @@ The options argument can be omitted in favour of the parent argument.
 		"top"
 	);
 	//	myElement = <button style="background-color: red; border-color: green; color: green;" onclick="alert(\"hello, world!\");">click</button>
-
+```
 
 ## Wrapper (#)
 
