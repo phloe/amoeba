@@ -140,7 +140,7 @@ Identifies the type of the supplied variable.
 ```js
 var myVariable = ["hello", "world"];
 var myType = _.type(myVariable);
-//myType == "array"
+//myType == "array";
 ```
 
 
@@ -162,7 +162,7 @@ var myObject = {
 };
 _.extend(myObject, {recipient: "world"});
 /*
-	myObject = {
+	myObject == {
 		message: "hello",
 		recipient: "world"
 	};
@@ -186,7 +186,7 @@ var myObject = {
 	recipient: "world"
 };
 var myQueryString = _.toQuery(myObject);
-// myQueryString = "message=hello&recipient=world";
+// myQueryString == "message=hello&recipient=world";
 ```
 
 
@@ -202,11 +202,11 @@ Returns an object containing the querystring data contained in the supplied stri
 
 ```js
 /*
-	window.location.href = "http://www.mydomain.com/index.php?message=hello&recipient=world";
+	window.location.href == "http://www.mydomain.com/index.php?message=hello&recipient=world";
 */
 var myObject = _.parseQuery(window.location.href);
 /*
-	myObject = {
+	myObject == {
 		message: "hello",
 		recipient: "world"
 	};
@@ -233,7 +233,7 @@ var myObject = {
 	recipient: "world"
 };
 var myMessage = _.template(myTemplate, myObject);
-// myMessage = "hello, world!";
+// myMessage == "hello, world!";
 ```
 
 
@@ -272,7 +272,7 @@ var myElement = _.create(
 	document.body,
 	"top"
 );
-//	myElement = <button style="background-color: red; border-color: green; color: green;" onclick="alert(\"hello, world!\");">click</button>
+//	myElement == <button style="background-color: red; border-color: green; color: green;" onclick="alert(\"hello, world!\");">click</button>
 ```
 
 
