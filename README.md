@@ -16,12 +16,12 @@ Exposes the internal `$` (get) and `$$` (getAll) functions and `_` (util) namesp
 References are passed into the callback function as arguments (so you could call them whatever you like).
 
 ```js
-	_amoeba(function($, $$, _){
-		var page = $("#page");
-		if (page.match(".active")) {
-			var divs = page.getAll("div");
-		}
-	});
+_amoeba(function($, $$, _){
+	var page = $("#page");
+	if (page.match(".active")) {
+		var divs = page.getAll("div");
+	}
+});
 ```
 
 
@@ -82,9 +82,9 @@ Loads a script onto the page and optionally executes a callback function on load
 ###### Example
 
 ```js
-	_.load("http://amoeba-js.net/js", function(){
-		alert("script loaded");
-	});
+_.load("http://amoeba-js.net/js", function(){
+	alert("script loaded");
+});
 ```
 
 
@@ -109,17 +109,17 @@ Creates and sends an XMLHttpRequest.
 ###### Example
 
 ```js
-	_.request(
-		"/api/data.json",
-		function (data) {
-			data = JSON.parse(data);
-			console.log(data);
-		},
-		{
-			id: "0123456789"
-		},
-		"GET"
-	);
+_.request(
+	"/api/data.json",
+	function (data) {
+		data = JSON.parse(data);
+		console.log(data);
+	},
+	{
+		id: "0123456789"
+	},
+	"GET"
+);
 ```
 
 
@@ -138,9 +138,9 @@ Identifies the type of the supplied variable.
 ###### Example
 
 ```js
-	var myVariable = ["hello", "world"];
-	var myType = _.type(myVariable);
-	//myType == "array"
+var myVariable = ["hello", "world"];
+var myType = _.type(myVariable);
+//myType == "array"
 ```
 
 
@@ -156,15 +156,17 @@ Extends (or overwrite) a given object with the properties of the supplied object
 ###### Example
 
 ```js
-	var myObject = {
+var myObject = {
+	message: "hello",
+	recipient: "steve"
+};
+_.extend(myObject, {recipient: "world"});
+/*
+	myObject = {
 		message: "hello",
-		recipient: "steve"
+		recipient: "world"
 	};
-	_.extend(myObject, {recipient: "world"});
-	// myObject = {
-	//	message: "hello",
-	//	recipient: "world"
-	//};
+*/
 ```
 
 
@@ -179,12 +181,12 @@ Returns a querystring built from the supplied object.
 ###### Example
 
 ```js
-	var myObject = {
-		message: "hello",
-		recipient: "world"
-	};
-	var myQueryString = _.toQuery(myObject);
-	// myQueryString = "message=hello&recipient=world";
+var myObject = {
+	message: "hello",
+	recipient: "world"
+};
+var myQueryString = _.toQuery(myObject);
+// myQueryString = "message=hello&recipient=world";
 ```
 
 
@@ -199,16 +201,16 @@ Returns an object containing the querystring data contained in the supplied stri
 ###### Example
 
 ```js
-	/*
-		window.location.href = "http://www.mydomain.com/index.php?message=hello&recipient=world";
-	*/
-	var myObject = _.parseQuery(window.location.href);
-	/*
-		myObject = {
-			message: "hello",
-			recipient: "world"
-		};
-	*/
+/*
+	window.location.href = "http://www.mydomain.com/index.php?message=hello&recipient=world";
+*/
+var myObject = _.parseQuery(window.location.href);
+/*
+	myObject = {
+		message: "hello",
+		recipient: "world"
+	};
+*/
 ```
 
 
@@ -224,14 +226,15 @@ Returns a template string populated with the data of the supplied object.
 
 ###### Example
 
-	var myTemplate = "{message}, {recipient}!";
-	var myObject = {
-		message: "hello",
-		recipient: "world"
-	};
-	var myMessage = _.template(myTemplate, myObject);
-	// myMessage = "hello, world!";
-
+```js
+var myTemplate = "{message}, {recipient}!";
+var myObject = {
+	message: "hello",
+	recipient: "world"
+};
+var myMessage = _.template(myTemplate, myObject);
+// myMessage = "hello, world!";
+```
 
 
 ### _.create
@@ -251,25 +254,27 @@ The options argument can be omitted in favour of the parent argument.
 (Wrapper) A wrapped element.
 
 ###### Example
+
 ```js
-	var myElement = _.create(
-		"button",
-		{
-			style: {
-				backgroundColor: "red",
-				borderColor:	"green",
-				color:			"green"
-			},
-			innerHTML: "click",
-			onclick: function(){
-				alert("hello, world!");
-			}
+var myElement = _.create(
+	"button",
+	{
+		style: {
+			backgroundColor: "red",
+			borderColor:	"green",
+			color:			"green"
 		},
-		document.body,
-		"top"
-	);
-	//	myElement = <button style="background-color: red; border-color: green; color: green;" onclick="alert(\"hello, world!\");">click</button>
+		innerHTML: "click",
+		onclick: function(){
+			alert("hello, world!");
+		}
+	},
+	document.body,
+	"top"
+);
+//	myElement = <button style="background-color: red; border-color: green; color: green;" onclick="alert(\"hello, world!\");">click</button>
 ```
+
 
 ## Wrapper (#)
 
@@ -340,9 +345,11 @@ Finds the first element that matches the provided selector.
 
 ###### Example
 
-	var body = $("body");
-	var firstUserItem = body.get("ul.users li");
-	var checkedRadio = body.get("input[name='optIn'][type='radio'][checked]");
+```js
+var body = $("body");
+var firstUserItem = body.get("ul.users li");
+var checkedRadio = body.get("input[name='optIn'][type='radio'][checked]");
+```
 
 
 ### #.getAll
@@ -359,8 +366,10 @@ Returns an array containing all elements that match the supplied selector.
 
 ###### Example
 
-	var body = $("body");
-	var userItems = body.getAll("ul.users li");
+```js
+var body = $("body");
+var userItems = body.getAll("ul.users li");
+```
 
 
 ### #.children
@@ -377,8 +386,10 @@ Returns an array of child elements. If the selector argument is supplied only th
 
 ###### Example
 
-	var ul = $("ul");
-	var activeUserItems = ul.children(".active");
+```js
+var ul = $("ul");
+var activeUserItems = ul.children(".active");
+```
 
 
 ### #.siblings
@@ -395,8 +406,10 @@ Returns an array of sibling elements. If the selector argument is supplied only 
 
 ###### Example
 
-	var firstDiv = $("body div");
-	var otherDivs = firstDiv.siblings("div");
+```js
+var firstDiv = $("body div");
+var otherDivs = firstDiv.siblings("div");
+```
 
 
 ### #.next
@@ -413,9 +426,10 @@ Returns the next sibling element. If the selector argument is supplied the first
 
 ###### Example
 
-	var firstDiv = $("body div");
-	var nextDiv = firstDiv.next("div");
-
+```js
+var firstDiv = $("body div");
+var nextDiv = firstDiv.next("div");
+```
 
 ### #.prev
 
@@ -431,8 +445,10 @@ Returns the previous sibling element. If the selector argument is supplied the f
 
 ###### Example
 
-	var divs = $$("body > div");
-	var spanBeforeLastDiv = divs[divs.length - 1].prev("span");
+```js
+var divs = $$("body > div");
+var spanBeforeLastDiv = divs[divs.length - 1].prev("span");
+```
 
 
 ### #.contains
@@ -449,11 +465,13 @@ Returns true if the supplied child is a descendant of the wrapped element.
 
 ###### Example
 
-	var body = $("body");
-	var div = $("div");
-	if (body.contains(div)) {
-		// do stuff
-	}
+```js
+var body = $("body");
+var div = $("div");
+if (body.contains(div)) {
+	// do stuff
+}
+```
 
 
 ### #.matches
@@ -470,7 +488,9 @@ Returns true or false for whether the supplied selector matches the element.
 
 ###### Example
 
-	$("div.class").matches(".class");
+```js
+$("div.class").matches(".class");
+```
 
 
 ### #.addClass
@@ -487,7 +507,9 @@ Adds the supplied classname if it doesn't exist on the wrapped element.
 
 ###### Example
 
-	$("div.user").addClass("active");
+```js
+$("div.user").addClass("active");
+```
 
 
 ### #.removeClass
@@ -504,7 +526,9 @@ Removes the supplied classname if it exists on the wrapped element.
 
 ###### Example
 
-	$("div.active").removeClass("active");
+```js
+$("div.active").removeClass("active");
+```
 
 
 ### #.on
@@ -522,9 +546,11 @@ Add an event to the wrapped element.
 
 ###### Example
 
-	$("div").on("click span", function(){
-		// only react on clicks on span elements inside the div. 
-	});
+```js
+$("div").on("click span", function(){
+	// only react on clicks on span elements inside the div. 
+});
+```
 
 
 ### #.off
@@ -542,8 +568,9 @@ Remove an event from the wrapped element.
 
 ###### Example
 
-	var handleClick = function(){
-		// do stuff
-	};
-	$("button").off("click", handleClick);
-
+```js
+var handleClick = function(){
+	// do stuff
+};
+$("button").off("click", handleClick);
+```
