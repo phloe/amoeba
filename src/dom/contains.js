@@ -1,6 +1,6 @@
 /*
 
-	http://www.quirksmode.org/blog/archives/2006/01/contains_for_mo.html
+	Credits: http://www.quirksmode.org/blog/archives/2006/01/contains_for_mo.html
 
 */
 

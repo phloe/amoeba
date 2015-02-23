@@ -1,5 +1,9 @@
-var slice = [].slice;
-
 module.exports = function (selector, parent) {
-	return slice.call((parent || document).querySelectorAll(selector));
+	var nodelist = (parent || document).querySelectorAll(selector);
+	var index = nodelist.length;
+	var elements = [];
+	while (index--) {
+		elements[index] = nodelist[index];
+	}
+	return elements;
 };

@@ -10,6 +10,6 @@ module.exports = {
 		path: "./dist/",
 		filename: "[name].js",
 		library: name,
-		libraryTarget: "umd"
+		libraryTarget: "var"
 	}
 };

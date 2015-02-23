@@ -1,3 +1,11 @@
+/*
+	
+	Credits: Kangax for the clever toString bit.
+	
+*/
+
+var toString = ({}).toString;
+
 module.exports = function (subject) {
 	var type;
 
@@ -12,7 +20,7 @@ module.exports = function (subject) {
 			break;
 
 		default:
-			type = ({}).toString.call(subject).slice(8, -1).toLowerCase();
+			type = toString.call(subject).slice(8, -1).toLowerCase();
 			if (type.indexOf("element") > -1) {
 				type = "element";
 			}

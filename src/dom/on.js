@@ -2,12 +2,12 @@ var matches = require("./matches");
 
 module.exports = function (element, eventType, callback) {
 	var useCapture = false;
-	if (eventType.indexOf(" ") > -1) {
+	var spaceIndex = eventType.indexOf(" ");
+	if (spaceIndex > -1) {
 		var _callback = callback;
-		var split = eventType.split(" ");
-		var selector = split[1];
+		var selector = eventType.slice(spaceIndex + 1);
 
-		eventType = split[0];
+		eventType = eventType.slice(0, spaceIndex);
 
 		useCapture = true;
 

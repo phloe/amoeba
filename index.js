@@ -1,6 +1,4 @@
 // _amoeba.js - micro api for bookmarklets.
-// https://github.com/rasmusfl0e/amoeba
-
 
 var type = require("./src/type");
 var request = require("./src/request");

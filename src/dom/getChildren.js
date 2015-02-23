@@ -1,14 +1,18 @@
 var matches = require("./matches");
-var slice = [].slice;
 
 module.exports = function (element, selector) {
-	var children = slice.call(element.children);
+	var nodelist = element.children;
+	var index = nodelist.length;
+	var elements = [];
+	while (index--) {
+		elements[index] = nodelist[index];
+	}
 	
 	if (selector) {
-		return children.filter(function (element) {
+		return elements.filter(function (element) {
 			return matches(element, selector);
 		});
 	}
 	
-	return children;
+	return elements;
 };

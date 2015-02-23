@@ -1,6 +1,6 @@
 ![Amoeba micro API](http://amoeba-js.net/img/type.svg)
 
-Micro API designed for use in bootstrap bookmarklets.
+Micro API designed for use in bootstrapped bookmarklets.
 
 Amoeba was made from the following assumptions:
 
@@ -8,11 +8,9 @@ Amoeba was made from the following assumptions:
 
 2. Only modern browsers (IE9+) need to be supported; users are expected to be intermediate to advanced users.
 
-It currently weighs in at just 2.1Kb minified and gzipped.
+It currently weighs in at just 1.9Kb minified and gzipped.
 
-
-
-## _amoeba
+# _amoeba
 
 Exposes the internal `$` (get) and `$$` (getAll) functions and `_` (util) namespace.
 References are passed into the callback function as arguments (so you could call them whatever you like).
@@ -31,8 +29,8 @@ Finds an element matching the supplied selector or wraps an existing element.
 
 ###### Arguments
 
-* `selector` (String or Element) The CSS selector matching the element you want - or an existing element.
-* `parent` (Element) Optional. Root element for the search.
+* `selector` - (String or Element) The CSS selector matching the element you want - or an existing element.
+* `parent` - (Element) Optional. Root element for the search.
 
 ###### Returns
 
@@ -45,8 +43,8 @@ Returns an array of elements that match the supplied selector.
 
 ###### Arguments
 
-* `selector` (String) The CSS selector matching the elements you want.
-* `parent` (Element) Optional. Root element for the search.
+* `selector` - (String) The CSS selector matching the elements you want.
+* `parent` - (Element) Optional. Root element for the search.
 
 ###### Returns
 
@@ -55,17 +53,25 @@ Returns an array of elements that match the supplied selector.
 
 ## _ (util)
 
-Holds the methods for the main API.
+Holds the following utility functions:
 
+* [load](#_load)
+* [request](#_request)
+* [type](#_type)
+* [extend](#_extend)
+* [toQuery](#_toQuery)
+* [parseQuery](#_parseQuery)
+* [template](#_template)
+* [create](#_create)
 
-### load
+### _.load
 
 Loads a script onto the page and optionally executes a callback function on load.
 
 ###### Arguments
 
-* `url` (String) The url of the script to be loaded.
-* `func` (Function) Optional. A function that is called when the script has loaded.
+* `url` - (String) The url of the script to be loaded.
+* `func` - (Function) Optional. A function that is called when the script has loaded.
 
 ###### Returns
 
@@ -78,19 +84,19 @@ Loads a script onto the page and optionally executes a callback function on load
 	});
 
 
-### request
+### _.request
 
 Creates and sends an XMLHttpRequest.
 
 ###### Arguments
 
-* `url` (String) The url of the script to be loaded.
-* `func` (Function) A function that is called with the XMLHttpRequest object as an argument when the script has loaded.
-* `options` (Object) Optional.
-   * `data` (Object) Optional. An object containing the key-value pairs sent with the request.
-   * `method` (String) Optional. The mode of the request; "get" or "post". Default is "get".	
-   * `async` (Boolean) Optional. A boolean to set asynchronous mode on or off. Default is true.
-   * `headers` (Object) Optional. An Object containing additional headers.
+* `url` - (String) The url of the script to be loaded.
+* `func` - (Function) A function that is called with the XMLHttpRequest object as an argument when the script has loaded.
+* `options` - (Object) Optional.
+   * `data` - (Object) Optional. An object containing the key-value pairs sent with the request.
+   * `method` - (String) Optional. The mode of the request; "get" or "post". Default is "get".	
+   * `async` - (Boolean) Optional. A boolean to set asynchronous mode on or off. Default is true.
+   * `headers` - (Object) Optional. An Object containing additional headers.
 
 ###### Returns
 
@@ -111,13 +117,13 @@ Creates and sends an XMLHttpRequest.
 	);
 
 
-### type
+### _.type
 
 Identifies the type of the supplied variable.
 
 ###### Arguments
 
-* `subject` (mixed) The variable whose type is to be identified.
+* `subject` - (mixed) The variable whose type is to be identified.
 
 ###### Returns
 
@@ -133,14 +139,14 @@ Credits: Kangax
 
 
 
-### extend
+### _.extend
 
 Extends (or overwrite) a given object with the properties of the supplied object properties recursively.
 
 ###### Arguments
 
-* `subject` (Object) Object to extend.
-* `properties` (Object) Object containing properties to extend with.
+* `subject` - (Object) Object to extend.
+* `properties` - (Object) Object containing properties to extend with.
 
 ###### Example
 
@@ -155,13 +161,13 @@ Extends (or overwrite) a given object with the properties of the supplied object
 	//};
 
 
-### toQuery
+### _.toQuery
 
 Returns a querystring built from the supplied object.
 
 ###### Arguments
 
-* `subject` (Object) Object to transform into a querystring.
+* `subject` - (Object) Object to transform into a querystring.
 
 ###### Example
 
@@ -174,13 +180,13 @@ Returns a querystring built from the supplied object.
 
 
 
-### parseQuery
+### _.parseQuery
 
 Returns an object containing the querystring data contained in the supplied string.
 
 ###### Arguments
 
-* `string` (String) The string to be transformed.
+* `string` - (String) The string to be transformed.
 
 ###### Example
 
@@ -194,15 +200,15 @@ Returns an object containing the querystring data contained in the supplied stri
 
 
 
-### template
+### _.template
 
 Returns a template string populated with the data of the supplied object.
 
 ###### Arguments
 
-* `template` (String) A string with tokens.
-* `object` (Object) An object containing the data needed for populating the template.
-* `delimiters` (Array) Optional. An array containing 2 strings that define how tokens are marked up within the supplied template. Defaults are curly braces; { and }.
+* `template` - (String) A string with tokens.
+* `object` - (Object) An object containing the data needed for populating the template.
+* `delimiters` - (Array) Optional. An array containing 2 strings that define how tokens are marked up within the supplied template. Defaults are curly braces; { and }.
 
 ###### Example
 
@@ -216,17 +222,17 @@ Returns a template string populated with the data of the supplied object.
 
 
 
-### create
+### _.create
 
 Returns a newly created DOM element with the supplied properties from the options object. The created element is appended to the parent element if supplied. If a context is
 The options argument can be omitted in favour of the parent argument.
 
 ###### Arguments
 
-* `tag` (String) Name of the element.
-* `options` (Object) Optional. An object containing properties for the element.
-* `parent` (Element) Optional. An element to which the created element should be appended.
-* `context` (String) Optional. A string that specifies the relation to the parent element; "top" - insert as the first element inside parent. "bottom" - insert as the last element inside parent. "before" - insert before parent (outside). "after" - insert after parent (outside). Default is "bottom".
+* `tag` - (String) Name of the element.
+* `options` - (Object) Optional. An object containing properties for the element.
+* `parent` - (Element) Optional. An element to which the created element should be appended.
+* `context` - (String) Optional. A string that specifies the relation to the parent element - see [#.insert](#insert).
 
 ###### Returns
 
@@ -253,22 +259,45 @@ The options argument can be omitted in favour of the parent argument.
 	//	myElement = <button style="background-color: red; border-color: green; color: green;" onclick="alert(\"hello, world!\");">click</button>
 
 
-## Wrapper
+## Wrapper (#)
+
+Wrapped elements have the following properties and methods available:
+
+* [el](#el)
+* [insert](#insert)
+* [remove](#remove)
+* [get](#get)
+* [getAll](#getAll)
+* [children](#children)
+* [siblings](#siblings)
+* [next](#next)
+* [prev](#prev)
+* [contains](#contains)
+* [matches](#matches)
+* [addClass](#addClass)
+* [removeClass](#removeClass)
+* [on](#on)
+* [off](#off)
 
 
-### insert
+### #.el
+
+The actual DOM element being wrapped.
+
+
+### #.insert
 
 Inserts the supplied content into the wrapped element.
 
 ###### Arguments
 
-* `content` (String, Number, Element, Array or HtmlCollection) Content to be appended. If an array is supplied it should only consist of strings (text or html), numbers or elements.
-* `context` (String or Number) Optional. A string or number that specifies the relation to the parent element;
-   * `"top"` - insert as the first elements inside parent.
-   * `"bottom"` - insert as the last elements inside parent.
-   * `"before"` - insert before parent (outside).
-   * `"after"` - insert after parent (outside).
-   * a number - corresponds to the index of the childnodes where content will be inserted. Negative numbers have their index calculated in reverse.
+* `content` - (String, Number, Element, Array or HtmlCollection) Content to be appended. If an array is supplied it should only consist of strings (text or html), numbers or elements.
+* `context` - (String or Number) Optional. A string or number that specifies the relation to the parent element;
+   * `"top"` - Insert as the first elements inside parent.
+   * `"bottom"` - Insert as the last elements inside parent.
+   * `"before"` - Insert before parent (outside).
+   * `"after"` - Insert after parent (outside).
+   * (Number) - Corresponds to the index of the childnodes where content will be inserted. Negative numbers have their index calculated in reverse.
 Default is `"bottom"`.
 
 ###### Returns
@@ -276,7 +305,7 @@ Default is `"bottom"`.
 (Wrapper) The wrapped element.
 
 
-### remove 
+### #.remove 
 
 Remove the element from the DOM.
 
@@ -285,13 +314,13 @@ Remove the element from the DOM.
 (Wrapper) The wrapped element.
 
 
-### get
+### #.get
 
 Finds the first element that matches the provided selector.
 
 ###### Arguments
 
-* `selector` (String) The CSS selector matching the element to be returned.
+* `selector` - (String) The CSS selector matching the element to be returned.
 
 ###### Returns
 
@@ -304,13 +333,13 @@ Finds the first element that matches the provided selector.
 	var checkedRadio = body.get("input[name='optIn'][type='radio'][checked]");
 
 
-### getAll
+### #.getAll
 
 Returns an array containing all elements that match the supplied selector.
 
 ###### Arguments
 
-* `selector` (String) See {@link Wapper.get}
+* `selector` - (String) See [#.get](#get).
 
 ###### Returns
 
@@ -322,13 +351,13 @@ Returns an array containing all elements that match the supplied selector.
 	var userItems = body.getAll("ul.users li");
 
 
-### children
+### #.children
 
 Returns an array of child elements. If the selector argument is supplied only the elements matching it will be returned.
 
 ###### Arguments
 
-* `selector` (String) See Wapper.get.
+* `selector` - (String) Optional. See [#.get](#get).
 
 ###### Returns
 
@@ -340,13 +369,13 @@ Returns an array of child elements. If the selector argument is supplied only th
 	var activeUserItems = ul.children(".active");
 
 
-### siblings
+### #.siblings
 
 Returns an array of sibling elements. If the selector argument is supplied only the elements matching it will be returned.
 
 ###### Arguments
 
-* `selector` (String) See Wapper.get.
+* `selector` - (String) Optional. See [#.get](#get).
 
 ###### Returns
 
@@ -358,13 +387,13 @@ Returns an array of sibling elements. If the selector argument is supplied only 
 	var otherDivs = firstDiv.siblings("div");
 
 
-### next
+### #.next
 
 Returns the next sibling element. If the selector argument is supplied the first matching sibling element proceeding it will be returned.
 
 ###### Arguments
 
-* `selector` (String) See Wapper.get.
+* `selector` - (String) Optional. See [#.get](#get).
 
 ###### Returns
 
@@ -376,13 +405,13 @@ Returns the next sibling element. If the selector argument is supplied the first
 	var nextDiv = firstDiv.next("div");
 
 
-### prev
+### #.prev
 
 Returns the previous sibling element. If the selector argument is supplied the first matching sibling element preceding it will be returned.
 
 ###### Arguments
 
-* `selector` (String) See Wapper.get.
+* `selector` - (String) Optional. See [#.get](#get).
 
 ###### Returns
 
@@ -390,17 +419,17 @@ Returns the previous sibling element. If the selector argument is supplied the f
 
 ###### Example
 
-	var lastDiv = $$("body div")[0];
-	var prevDiv = lastDiv.prev("div");
+	var divs = $$("body > div");
+	var spanBeforeLastDiv = divs[divs.length - 1].prev("span");
 
 
-### contains
+### #.contains
 
 Returns true if the supplied child is a descendant of the wrapped element.
 
 ###### Arguments
 
-* `child` (Wrapper|Element) The element to test against.
+* `child` - (Wrapper|Element) The element to test against.
 
 ###### Returns
 
@@ -415,13 +444,13 @@ Returns true if the supplied child is a descendant of the wrapped element.
 	}
 
 
-### match
+### #.matches
 
 Returns true or false for whether the supplied selector matches the element.
 
 ###### Arguments
 
-* `selector` (String) Selector to match against wrapped element.
+* `selector` - (String) Selector to match against wrapped element.
 
 ###### Returns
 
@@ -429,16 +458,16 @@ Returns true or false for whether the supplied selector matches the element.
 
 ###### Example
 
-	$("div.class").match(".class");
+	$("div.class").matches(".class");
 
 
-### addClass
+### #.addClass
 
 Adds the supplied classname if it doesn't exist on the wrapped element.
 
 ###### Arguments
 
-* `className` (String) The classname to add.
+* `className` - (String) The classname to add.
 
 ###### Returns
 
@@ -449,13 +478,13 @@ Adds the supplied classname if it doesn't exist on the wrapped element.
 	$("div.user").addClass("active");
 
 
-### removeClass
+### #.removeClass
 
 Removes the supplied classname if it exists on the wrapped element.
 
 ###### Arguments
 
-* `className` (String) The classname to remove.
+* `className` - (String) The classname to remove.
 
 ###### Returns
 
@@ -466,14 +495,14 @@ Removes the supplied classname if it exists on the wrapped element.
 	$("div.active").removeClass("active");
 
 
-### on
+### #.on
 
 Add an event to the wrapped element.
 
 ###### Arguments
 
-* `event` (String) The type of event to add.
-* `func` (Function) The function to call on the event.
+* `event` - (String) The type of event to add. Can be extended with a selector to enable event delegation (note this has the side-effect of not working with `#.off`).
+* `func` - (Function) The function to call on the event.
 
 ###### Returns
 
@@ -481,19 +510,19 @@ Add an event to the wrapped element.
 
 ###### Example
 
-	$("button").on("click", function(){
-		// do stuff
+	$("div").on("click span", function(){
+		// only react on clicks on span elements inside the div. 
 	});
 
 
-### off
+### #.off
 
 Remove an event from the wrapped element.
 
 ###### Arguments
 
-* `event` (String) The type of event to remove.
-* `func` (Function) The function to remove.
+* `event` - (String) The type of event to remove.
+* `func` - (Function) The function to remove.
 
 ###### Returns
 
