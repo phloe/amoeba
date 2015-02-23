@@ -59,8 +59,8 @@ Holds the following utility functions:
 * [request](#_request)
 * [type](#_type)
 * [extend](#_extend)
-* [toQuery](#_toQuery)
-* [parseQuery](#_parseQuery)
+* [toQuery](#_toquery)
+* [parseQuery](#_parsequery)
 * [template](#_template)
 * [create](#_create)
 
@@ -274,8 +274,8 @@ Wrapped elements have the following properties and methods available:
 * [prev](#prev)
 * [contains](#contains)
 * [matches](#matches)
-* [addClass](#addClass)
-* [removeClass](#removeClass)
+* [addClass](#addclass)
+* [removeClass](#removeclass)
 * [on](#on)
 * [off](#off)
 
