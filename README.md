@@ -8,7 +8,7 @@ Amoeba was made from the following assumptions:
 
 2. Only modern browsers (IE9+) need to be supported; users are expected to be intermediate to advanced users.
 
-It currently weighs in at just 1.9Kb minified and gzipped.
+It currently weighs in at just 2Kb minified and gzipped.
 
 # _amoeba
 
