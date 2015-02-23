@@ -201,10 +201,8 @@ Returns an object containing the querystring data contained in the supplied stri
 ###### Example
 
 ```js
-/*
-	location.href == "http://www.mydomain.com/index.php?message=hello&recipient=world"
-*/
-var myObject = _.parseQuery(window.location.href);
+// location.href == "http://www.mydomain.com/index.php?message=hello&recipient=world"
+var myObject = _.parseQuery(location.href);
 /*
 	myObject == {
 		message: "hello",
@@ -272,7 +270,7 @@ var myElement = _.create(
 	document.body,
 	"top"
 );
-//	myElement == <button style="background-color: red; border-color: green; color: green;" onclick="alert(\"hello, world!\");">click</button>
+// myElement == <button style="background-color: red; border-color: green; color: green;" onclick="alert(\"hello, world!\");">click</button>
 ```
 
 
