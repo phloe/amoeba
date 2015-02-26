@@ -1,11 +1,3 @@
-var type = require("./type");
-var request = require("./request");
-var extend = require("./extend");
-var toQuery = require("./toQuery");
-
-var parseQuery = require("./string/parseQuery");
-var template = require("./string/template");
-
 var create = require("./dom/create");
 var load = require("./dom/load");
 
@@ -21,16 +13,16 @@ module.exports = {
 		return new Wrapper(load.apply(null, arguments));
 	},
 
-	request: request,
+	request: require("./request"),
 
-	type: type,
+	type: require("./type"),
 
-	extend: extend,
+	extend: require("./extend"),
 
-	toQuery: toQuery,
+	toQuery: require("./toQuery"),
 
-	parseQuery: parseQuery,
+	fromQuery: require("./string/fromQuery"),
 
-	template: template
+	template: require("./string/template")
 
 };

@@ -2,18 +2,18 @@ var type = require("./type");
 
 var insert = require("./dom/insert");
 var remove = require("./dom/remove");
-var addClass = require("./dom/addClass");
-var removeClass = require("./dom/removeClass");
-var contains = require("./dom/contains");
-var on = require("./dom/on");
-var off = require("./dom/off");
 var get = require("./dom/get");
+var getNext = require("./dom/getNext");
+var getPrevious = require("./dom/getPrevious");
 var getAll = require("./dom/getAll");
 var getChildren = require("./dom/getChildren");
 var getSiblings = require("./dom/getSiblings");
-var getNext = require("./dom/getNext");
-var getPrevious = require("./dom/getPrevious");
+var contains = require("./dom/contains");
 var matches = require("./dom/matches");
+var addClass = require("./dom/addClass");
+var removeClass = require("./dom/removeClass");
+var on = require("./dom/on");
+var off = require("./dom/off");
 
 function Wrapper (element) {
 	this.el = element || null;

@@ -62,7 +62,7 @@ Holds the following utility functions:
 * [type](#_type)
 * [extend](#_extend)
 * [toQuery](#_toquery)
-* [parseQuery](#_parsequery)
+* [fromQuery](#_fromquery)
 * [template](#_template)
 * [create](#_create)
 
@@ -116,9 +116,11 @@ _.request(
 		console.log(data);
 	},
 	{
-		id: "0123456789"
-	},
-	"GET"
+		data: {
+			id: "0123456789"
+		},
+		method: "post"
+	}
 );
 ```
 
@@ -172,11 +174,11 @@ _.extend(myObject, {recipient: "world"});
 
 ### _.toQuery
 
-Returns a querystring built from the supplied object.
+Returns a query string built from the supplied object.
 
 ###### Arguments
 
-* `subject` - (Object) Object to transform into a querystring.
+* `subject` - (Object) Object to transform into a query string.
 
 ###### Example
 
@@ -190,9 +192,9 @@ var myQueryString = _.toQuery(myObject);
 ```
 
 
-### _.parseQuery
+### _.fromQuery
 
-Returns an object containing the querystring data contained in the supplied string.
+Returns an object containing the query string data contained in the supplied string.
 
 ###### Arguments
 
@@ -202,7 +204,7 @@ Returns an object containing the querystring data contained in the supplied stri
 
 ```js
 // location.href == "http://www.mydomain.com/index.php?message=hello&recipient=world"
-var myObject = _.parseQuery(location.href);
+var myObject = _.fromQuery(location.href);
 /*
 	myObject == {
 		message: "hello",
