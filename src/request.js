@@ -21,7 +21,7 @@ module.exports = function (url, callback, options) {
 		}
 	}
 
-	xhr.open(mode, url, async);
+	xhr.open(method, url, async);
 
 	for (key in headers) {
 		xhr.setRequestHeader(key, headers[key]);
