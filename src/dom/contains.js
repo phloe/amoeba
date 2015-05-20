@@ -4,12 +4,12 @@
 
 */
 
-var func = function (child) {
+var func = function (element, child) {
 	return element.contains(child);
 };
 
 if (window.Node && Node.prototype && Node.prototype.compareDocumentPosition) {
-	func = function (child) {
+	func = function (element, child) {
 		return !!(element.compareDocumentPosition(child) & 16);
 	};
 }
