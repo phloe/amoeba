@@ -1,6 +1,6 @@
 {
   "name": "amoeba-api",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Micro API designed for use in bootstrap bookmarklets.",
   "main": "index.js",
   "scripts": {
