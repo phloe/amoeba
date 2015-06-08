@@ -1,6 +1,6 @@
 {
   "name": "amoeba-api",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Micro API designed for use in bootstrap bookmarklets.",
   "main": "index.js",
   "scripts": {
@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/rasmusfl0e/amoeba",
   "devDependencies": {
-    "eslint": "^0.14.1",
+    "eslint": "^0.22.1",
     "gzip-size": "^1.0.0",
     "jasmine": "^2.2.1",
     "uglify-js": "^2.4.16",
